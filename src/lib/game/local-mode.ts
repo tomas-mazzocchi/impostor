@@ -220,6 +220,25 @@ export function recordRoundWinner(
 	};
 }
 
+export function reverseRoundWinner(
+	state: GameState,
+	winner: 'impostor' | 'players'
+): GameState {
+	const updatedPlayers = state.players.map((player) => {
+		if (winner === 'impostor' && player.role === 'impostor') {
+			return { ...player, score: Math.max(0, player.score - 1) };
+		} else if (winner === 'players' && player.role === 'regular') {
+			return { ...player, score: Math.max(0, player.score - 1) };
+		}
+		return player;
+	});
+
+	return {
+		...state,
+		players: updatedPlayers
+	};
+}
+
 export function startNextRound(
 	state: GameState,
 	allWords: Word[],

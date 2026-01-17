@@ -13,6 +13,7 @@
 		endGame,
 		getPlayerById,
 		recordRoundWinner,
+		reverseRoundWinner,
 		startNextRound,
 		showFinalResults,
 		reshuffleWord
@@ -75,6 +76,10 @@
 
 	function handleRoundWinner(event: CustomEvent<'impostor' | 'players'>) {
 		gameState = recordRoundWinner(gameState, event.detail);
+	}
+
+	function handleReverseRoundWinner(event: CustomEvent<'impostor' | 'players'>) {
+		gameState = reverseRoundWinner(gameState, event.detail);
 	}
 
 	function handleNextRound() {
@@ -141,6 +146,7 @@
 			on:clearView={handleClearView}
 			on:complete={handleRevealComplete}
 			on:roundWinner={(e) => handleRoundWinner(e)}
+			on:reverseRoundWinner={(e) => handleReverseRoundWinner(e)}
 			on:nextRound={handleNextRound}
 			on:endGame={handleEndGame}
 			on:reshuffleWord={handleReshuffleWord}
@@ -162,6 +168,7 @@
 			{currentViewingPlayerId}
 			{viewedPlayers}
 			on:roundWinner={(e) => handleRoundWinner(e)}
+			on:reverseRoundWinner={(e) => handleReverseRoundWinner(e)}
 			on:nextRound={handleNextRound}
 			on:endGame={handleEndGame}
 			on:reshuffleWord={handleReshuffleWord}

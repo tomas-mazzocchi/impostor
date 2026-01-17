@@ -10,6 +10,7 @@
   let cardVisible = false;
   let showRoundResults = false;
   let selectedWinner: 'impostor' | 'players' | null = null;
+  let previouslyRecordedWinner: 'impostor' | 'players' | null = null;
   let lastRoundNumber = 0;
 
   // Reset when starting a new round (round number changes)
@@ -17,6 +18,7 @@
     lastRoundNumber = gameState.roundNumber;
     showRoundResults = false;
     selectedWinner = null;
+    previouslyRecordedWinner = null;
   }
 
   function handleViewPlayer(playerId: string) {
@@ -59,7 +61,18 @@
 
   function handleWinnerSelected(winner: 'impostor' | 'players') {
     selectedWinner = winner;
-    dispatch('roundWinner', winner);
+    
+    // Only record if this is a different selection than what was previously recorded
+    if (previouslyRecordedWinner !== winner) {
+      // If there was a previously recorded winner, reverse it first
+      if (previouslyRecordedWinner !== null) {
+        dispatch('reverseRoundWinner', previouslyRecordedWinner);
+      }
+      
+      // Record the new winner
+      dispatch('roundWinner', winner);
+      previouslyRecordedWinner = winner;
+    }
   }
 
   function handleContinueToNextRound() {
