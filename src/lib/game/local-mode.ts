@@ -52,8 +52,8 @@ export function startGame(
 	if (!state.category) {
 		throw new Error('Category must be selected');
 	}
-	if (words.length < state.players.length) {
-		throw new Error('Not enough words for all players');
+	if (words.length === 0) {
+		throw new Error('No words available for the selected category');
 	}
 
 	const impostorIndex = Math.floor(Math.random() * state.players.length);
@@ -150,8 +150,8 @@ export function startNextRound(state: GameState, words: Word[]): GameState {
 	if (!state.category) {
 		throw new Error('Category must be selected');
 	}
-	if (words.length < state.players.length) {
-		throw new Error('Not enough words for all players');
+	if (words.length === 0) {
+		throw new Error('No words available for the selected category');
 	}
 
 	const impostorIndex = Math.floor(Math.random() * state.players.length);
