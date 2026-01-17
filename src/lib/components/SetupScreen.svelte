@@ -21,20 +21,7 @@
 		}
 	}
 
-	function selectRandomCategory() {
-		if (sampleCategories.length > 0 && gameState.category === null) {
-			const randomIndex = Math.floor(Math.random() * sampleCategories.length);
-			const randomCategory = sampleCategories[randomIndex];
-			dispatch('selectCategory', randomCategory);
-		}
-	}
-
-	// Automatically select a random category when there are enough players
-	$: if (gameState.players.length >= 3 && gameState.category === null) {
-		selectRandomCategory();
-	}
-
-	$: canStartGame = gameState.players.length >= 3 && gameState.category !== null;
+	$: canStartGame = gameState.players.length >= 3;
 </script>
 
 <div class="setup-screen">

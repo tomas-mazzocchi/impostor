@@ -38,16 +38,23 @@
     return getPlayerById(gameState, currentViewingPlayerId);
   }
 
-  function getStartingPlayer() {
+  $: startingPlayer = (() => {
     if (gameState.currentPlayerIndex >= 0 && gameState.currentPlayerIndex < gameState.players.length) {
       return gameState.players[gameState.currentPlayerIndex];
     }
     return null;
-  }
+  })();
 
   function handleRoundFinished() {
     showRoundResults = true;
     selectedWinner = null;
+  }
+
+  function handleReshuffleWord() {
+    // Close any open cards to ensure fresh view
+    cardVisible = false;
+    currentViewingPlayerId = null;
+    dispatch('reshuffleWord');
   }
 
   function handleWinnerSelected(winner: 'impostor' | 'players') {
@@ -183,14 +190,19 @@
       {/if}
     {/if}
 
-    {#if getStartingPlayer()}
+    {#if startingPlayer}
       <div class="start-game-section">
         <p class="starting-player-info">
-          <strong>{getStartingPlayer()?.name}</strong> will start the game!
+          <strong>{startingPlayer.name}</strong> will start the game!
         </p>
-        <button class="continue-button" on:click={handleRoundFinished}>
-          Round Finished
-        </button>
+        <div class="action-buttons-reveal">
+          <button class="reshuffle-button" on:click={handleReshuffleWord}>
+            🔀 Reshuffle Word
+          </button>
+          <button class="continue-button" on:click={handleRoundFinished}>
+            Round Finished
+          </button>
+        </div>
       </div>
     {/if}
   </div>
@@ -359,6 +371,30 @@
     margin-top: 2rem;
   }
 
+  .action-buttons-reveal {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .reshuffle-button {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+  }
+
+  .reshuffle-button:hover {
+    background: #5a6268;
+  }
+
   .starting-player-info {
     font-size: 1.2rem;
     text-align: center;
@@ -492,7 +528,7 @@
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
   }
 
   .player-score {

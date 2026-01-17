@@ -42,26 +42,40 @@ export function selectCategory(state: GameState, category: Category): GameState 
 	};
 }
 
+function findCategoryByWord(categories: Category[], word: Word): Category | null {
+	return categories.find((c) => c.id === word.categoryId) || null;
+}
+
 export function startGame(
 	state: GameState,
-	words: Word[]
+	allWords: Word[],
+	categories: Category[]
 ): GameState {
 	if (state.players.length < 3) {
 		throw new Error('Need at least 3 players');
 	}
-	if (!state.category) {
-		throw new Error('Category must be selected');
+	if (allWords.length === 0) {
+		throw new Error('No words available');
 	}
-	if (words.length === 0) {
-		throw new Error('No words available for the selected category');
+	if (categories.length === 0) {
+		throw new Error('No categories available');
+	}
+
+	// Pick a random word from ALL words first
+	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
+	const selectedWord = shuffledWords[0];
+
+	// Find the category that matches the word's categoryId
+	const category = findCategoryByWord(categories, selectedWord);
+	if (!category) {
+		throw new Error(`No category found for word: ${selectedWord.word}`);
 	}
 
 	const impostorIndex = Math.floor(Math.random() * state.players.length);
-	const shuffledWords = [...words].sort(() => Math.random() - 0.5);
 	const startingPlayerIndex = Math.floor(Math.random() * state.players.length);
 
 	// Pick one word for all regular players
-	const regularPlayerWord = shuffledWords[0].word;
+	const regularPlayerWord = selectedWord.word;
 
 	const playersWithWords = state.players.map((player, index) => {
 		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
@@ -72,6 +86,7 @@ export function startGame(
 	return {
 		...state,
 		phase: 'reveal',
+		category,
 		players: playersWithWords,
 		words: shuffledWords,
 		impostorIndex,
@@ -90,6 +105,63 @@ export function moveToPlayingPhase(state: GameState): GameState {
 	};
 }
 
+export function reshuffleWord(
+	state: GameState,
+	categories: Category[],
+	allWords: Word[]
+): GameState {
+	if (state.phase !== 'reveal') {
+		throw new Error('Can only reshuffle word during reveal phase');
+	}
+	if (categories.length === 0) {
+		throw new Error('No categories available');
+	}
+	if (allWords.length === 0) {
+		throw new Error('No words available');
+	}
+
+	// Pick a random word from ALL words first
+	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
+	const selectedWord = shuffledWords[0];
+
+	// Find the category that matches the word's categoryId
+	const category = findCategoryByWord(categories, selectedWord);
+	if (!category) {
+		throw new Error(`No category found for word: ${selectedWord.word}`);
+	}
+
+	// Ensure impostor changes (if there are multiple players)
+	let impostorIndex: number;
+	do {
+		impostorIndex = Math.floor(Math.random() * state.players.length);
+	} while (impostorIndex === state.impostorIndex && state.players.length > 1);
+
+	// Ensure starting player changes (if there are multiple players)
+	let startingPlayerIndex: number;
+	do {
+		startingPlayerIndex = Math.floor(Math.random() * state.players.length);
+	} while (startingPlayerIndex === state.currentPlayerIndex && state.players.length > 1);
+
+	// Pick one word for all regular players
+	const regularPlayerWord = selectedWord.word;
+
+	const playersWithWords = state.players.map((player, index) => {
+		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
+		const word = role === 'impostor' ? null : regularPlayerWord;
+		return { ...player, role, word };
+	});
+
+	return {
+		...state,
+		category,
+		players: playersWithWords,
+		words: shuffledWords,
+		impostorIndex,
+		currentPlayerIndex: startingPlayerIndex
+		// Keep roundNumber unchanged
+	};
+}
+
 export function addAccusation(
 	state: GameState,
 	accuserId: string,
@@ -105,16 +177,18 @@ export function addAccusation(
 }
 
 export function startVoting(state: GameState): GameState {
+	// Voting phase is no longer used, but keeping function for backward compatibility
 	return {
 		...state,
-		phase: 'voting'
+		phase: 'roundResults'
 	};
 }
 
 export function endGame(state: GameState, winner: 'impostor' | 'players'): GameState {
+	// Results phase renamed to finalResults, but keeping function for backward compatibility
 	return {
 		...state,
-		phase: 'results',
+		phase: 'finalResults',
 		winner
 	};
 }
@@ -146,20 +220,33 @@ export function recordRoundWinner(
 	};
 }
 
-export function startNextRound(state: GameState, words: Word[]): GameState {
-	if (!state.category) {
-		throw new Error('Category must be selected');
+export function startNextRound(
+	state: GameState,
+	allWords: Word[],
+	categories: Category[]
+): GameState {
+	if (allWords.length === 0) {
+		throw new Error('No words available');
 	}
-	if (words.length === 0) {
-		throw new Error('No words available for the selected category');
+	if (categories.length === 0) {
+		throw new Error('No categories available');
+	}
+
+	// Pick a random word from ALL words first
+	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
+	const selectedWord = shuffledWords[0];
+
+	// Find the category that matches the word's categoryId
+	const category = findCategoryByWord(categories, selectedWord);
+	if (!category) {
+		throw new Error(`No category found for word: ${selectedWord.word}`);
 	}
 
 	const impostorIndex = Math.floor(Math.random() * state.players.length);
-	const shuffledWords = [...words].sort(() => Math.random() - 0.5);
 	const startingPlayerIndex = Math.floor(Math.random() * state.players.length);
 
 	// Pick one word for all regular players
-	const regularPlayerWord = shuffledWords[0].word;
+	const regularPlayerWord = selectedWord.word;
 
 	const playersWithWords = state.players.map((player, index) => {
 		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
@@ -170,6 +257,7 @@ export function startNextRound(state: GameState, words: Word[]): GameState {
 	return {
 		...state,
 		phase: 'reveal',
+		category,
 		players: playersWithWords,
 		words: shuffledWords,
 		impostorIndex,

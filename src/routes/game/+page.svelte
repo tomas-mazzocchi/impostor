@@ -14,7 +14,8 @@
 		getPlayerById,
 		recordRoundWinner,
 		startNextRound,
-		showFinalResults
+		showFinalResults,
+		reshuffleWord
 	} from '$lib/game/local-mode';
 	import SetupScreen from '$lib/components/SetupScreen.svelte';
 	import RevealScreen from '$lib/components/RevealScreen.svelte';
@@ -61,8 +62,11 @@
 	}
 
 	function handleStartGame() {
-		const categoryWords = sampleWords.filter((w) => w.categoryId === gameState.category?.id);
-		gameState = startGame(gameState, categoryWords);
+		gameState = startGame(gameState, sampleWords, sampleCategories);
+	}
+
+	function handleReshuffleWord() {
+		gameState = reshuffleWord(gameState, sampleCategories, sampleWords);
 	}
 
 	function handleRevealComplete() {
@@ -74,8 +78,7 @@
 	}
 
 	function handleNextRound() {
-		const categoryWords = sampleWords.filter((w) => w.categoryId === gameState.category?.id);
-		gameState = startNextRound(gameState, categoryWords);
+		gameState = startNextRound(gameState, sampleWords, sampleCategories);
 	}
 
 	function handleEndGame() {
@@ -140,6 +143,7 @@
 			on:roundWinner={(e) => handleRoundWinner(e)}
 			on:nextRound={handleNextRound}
 			on:endGame={handleEndGame}
+			on:reshuffleWord={handleReshuffleWord}
 		/>
 	{:else if gameState.phase === 'playing'}
 		<GameScreen
@@ -160,6 +164,7 @@
 			on:roundWinner={(e) => handleRoundWinner(e)}
 			on:nextRound={handleNextRound}
 			on:endGame={handleEndGame}
+			on:reshuffleWord={handleReshuffleWord}
 		/>
 	{:else if gameState.phase === 'finalResults'}
 		<FinalResultsScreen {gameState} on:newGame={handleNewGame} />
