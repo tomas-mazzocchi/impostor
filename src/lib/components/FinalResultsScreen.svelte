@@ -8,26 +8,39 @@
   const dispatch = createEventDispatcher();
 
   const rankedPlayers = getPlayersByScore(gameState);
-  const winner = rankedPlayers[0];
+  const highestScore = rankedPlayers.length > 0 ? rankedPlayers[0].score : 0;
+  const winners = rankedPlayers.filter((player) => player.score === highestScore);
 </script>
 
 <div class="final-results-screen">
   <h1>Final Rankings</h1>
 
   <div class="winner-announcement">
-    <h2>🏆 Winner: {winner.name} 🏆</h2>
-    <p class="winner-score">Final Score: {winner.score} points</p>
+    {#if winners.length === 1}
+      <h2>🏆 Winner: {winners[0].name} 🏆</h2>
+      <p class="winner-score">Final Score: {winners[0].score} points</p>
+    {:else}
+      <h2>🏆 Winners 🏆</h2>
+      <div class="winners-list">
+        {#each winners as winner}
+          <div class="winner-item">
+            <span class="winner-name">{winner.name}</span>
+          </div>
+        {/each}
+      </div>
+      <p class="winner-score">Final Score: {highestScore} points</p>
+    {/if}
   </div>
 
   <div class="rankings-list">
     {#each rankedPlayers as player, index}
-      <div class="ranking-item" class:first={index === 0}>
+      <div class="ranking-item" class:first={player.score === highestScore}>
         <div class="rank-number">
-          {#if index === 0}
+          {#if player.score === highestScore}
             🥇
-          {:else if index === 1}
+          {:else if index === 1 && rankedPlayers[1].score !== highestScore}
             🥈
-          {:else if index === 2}
+          {:else if index === 2 && rankedPlayers[2]?.score !== highestScore && rankedPlayers[1].score !== highestScore}
             🥉
           {:else}
             #{index + 1}
@@ -80,9 +93,29 @@
 
   .winner-score {
     font-size: 1.5rem;
-    margin: 0;
+    margin: 0.5rem 0 0 0;
     color: #555;
     font-weight: bold;
+  }
+
+  .winners-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+
+  .winner-item {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .winner-name {
+    color: #333;
   }
 
   .rankings-list {
