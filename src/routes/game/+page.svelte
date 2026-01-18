@@ -155,16 +155,21 @@
 	}
 </script>
 
-<div class="game-container">
+<div class="min-h-screen p-8 max-w-[1200px] mx-auto">
 	{#if loading}
-		<div class="loading-screen">
+		<div class="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center">
 			<p>Loading game data...</p>
 		</div>
 	{:else if error}
-		<div class="error-screen">
-			<h2>Error loading game data</h2>
+		<div class="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center">
+			<h2 class="text-danger m-0">Error loading game data</h2>
 			<p>{error}</p>
-			<button on:click={loadGameData}>Retry</button>
+			<button 
+				class="px-6 py-3 bg-primary text-white border-none rounded-lg cursor-pointer text-base transition-colors hover:bg-blue-700"
+				on:click={loadGameData}
+			>
+				Retry
+			</button>
 		</div>
 	{:else if gameState.phase === 'setup'}
 		<SetupScreen
@@ -217,42 +222,3 @@
 		<FinalResultsScreen {gameState} on:newGame={handleNewGame} />
 	{/if}
 </div>
-
-<style>
-	.game-container {
-		min-height: 100vh;
-		padding: 2rem;
-		max-width: 1200px;
-		margin: 0 auto;
-	}
-
-	.loading-screen,
-	.error-screen {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		min-height: 50vh;
-		gap: 1rem;
-		text-align: center;
-	}
-
-	.error-screen h2 {
-		color: #dc3545;
-		margin: 0;
-	}
-
-	.error-screen button {
-		padding: 0.75rem 1.5rem;
-		background: #007bff;
-		color: white;
-		border: none;
-		border-radius: 8px;
-		cursor: pointer;
-		font-size: 1rem;
-	}
-
-	.error-screen button:hover {
-		background: #0056b3;
-	}
-</style>

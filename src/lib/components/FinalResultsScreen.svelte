@@ -12,30 +12,30 @@
   const winners = rankedPlayers.filter((player) => player.score === highestScore);
 </script>
 
-<div class="final-results-screen">
-  <h1>Final Rankings</h1>
+<div class="flex flex-col gap-8 items-center w-full max-w-[800px] mx-auto">
+  <h1 class="text-center text-4xl text-gray-800">Final Rankings</h1>
 
-  <div class="winner-announcement">
+  <div class="bg-gradient-to-br from-yellow-300 to-orange-400 p-8 rounded-2xl text-center w-full shadow-md">
     {#if winners.length === 1}
-      <h2>🏆 Winner: {winners[0].name} 🏆</h2>
-      <p class="winner-score">Final Score: {winners[0].score} points</p>
+      <h2 class="text-3xl mb-2 text-gray-800">🏆 Winner: {winners[0].name} 🏆</h2>
+      <p class="text-2xl mt-2 text-gray-700 font-bold">Final Score: {winners[0].score} points</p>
     {:else}
-      <h2>🏆 Winners 🏆</h2>
-      <div class="winners-list">
+      <h2 class="text-3xl mb-2 text-gray-800">🏆 Winners 🏆</h2>
+      <div class="flex flex-wrap gap-3 justify-center my-4">
         {#each winners as winner}
-          <div class="winner-item">
-            <span class="winner-name">{winner.name}</span>
+          <div class="bg-white/30 px-4 py-2 rounded-full text-xl font-bold">
+            <span class="text-gray-800">{winner.name}</span>
           </div>
         {/each}
       </div>
-      <p class="winner-score">Final Score: {highestScore} points</p>
+      <p class="text-2xl mt-2 text-gray-700 font-bold">Final Score: {highestScore} points</p>
     {/if}
   </div>
 
-  <div class="rankings-list">
+  <div class="w-full flex flex-col gap-4">
     {#each rankedPlayers as player, index}
-      <div class="ranking-item" class:first={player.score === highestScore}>
-        <div class="rank-number">
+      <div class="flex items-center gap-6 bg-white p-6 rounded-xl border-2 shadow {player.score === highestScore ? 'border-yellow-300 bg-gradient-to-br from-yellow-50 to-yellow-100 shadow-lg' : 'border-gray-border'}">
+        <div class="text-3xl font-bold min-w-[60px] text-center">
           {#if player.score === highestScore}
             🥇
           {:else if index === 1 && rankedPlayers[1].score !== highestScore}
@@ -46,139 +46,18 @@
             #{index + 1}
           {/if}
         </div>
-        <div class="player-info">
-          <h3>{player.name}</h3>
-          <p class="player-score">Score: {player.score}</p>
+        <div class="flex-1">
+          <h3 class="mb-1 text-2xl text-gray-800">{player.name}</h3>
+          <p class="text-lg text-gray-text font-bold">Score: {player.score}</p>
         </div>
       </div>
     {/each}
   </div>
 
-  <button class="new-game-button" on:click={() => dispatch('newGame')}>
+  <button 
+    class="px-8 py-4 text-xl bg-primary text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-blue-700"
+    on:click={() => dispatch('newGame')}
+  >
     New Game
   </button>
 </div>
-
-<style>
-  .final-results-screen {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    align-items: center;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  h1 {
-    text-align: center;
-    font-size: 2.5rem;
-    color: #333;
-  }
-
-  .winner-announcement {
-    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-    padding: 2rem;
-    border-radius: 16px;
-    text-align: center;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .winner-announcement h2 {
-    font-size: 2rem;
-    margin: 0 0 0.5rem 0;
-    color: #333;
-  }
-
-  .winner-score {
-    font-size: 1.5rem;
-    margin: 0.5rem 0 0 0;
-    color: #555;
-    font-weight: bold;
-  }
-
-  .winners-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    justify-content: center;
-    margin: 1rem 0;
-  }
-
-  .winner-item {
-    background: rgba(255, 255, 255, 0.3);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  .winner-name {
-    color: #333;
-  }
-
-  .rankings-list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .ranking-item {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 2px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .ranking-item.first {
-    border-color: #f6d365;
-    background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
-    box-shadow: 0 4px 8px rgba(246, 211, 101, 0.3);
-  }
-
-  .rank-number {
-    font-size: 2rem;
-    font-weight: bold;
-    min-width: 60px;
-    text-align: center;
-  }
-
-  .player-info {
-    flex: 1;
-  }
-
-  .player-info h3 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.5rem;
-    color: #333;
-  }
-
-  .player-score {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #666;
-    font-weight: bold;
-  }
-
-  .new-game-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-  }
-
-  .new-game-button:hover {
-    background: #0056b3;
-  }
-</style>

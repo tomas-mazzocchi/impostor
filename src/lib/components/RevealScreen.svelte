@@ -93,41 +93,39 @@
 </script>
 
 {#if showRoundResults}
-  <div class="round-results-screen">
-    <h1>Round {gameState.roundNumber} Results</h1>
+  <div class="flex flex-col gap-8 items-center w-full max-w-[1000px] mx-auto">
+    <h1 class="text-center text-2xl">Round {gameState.roundNumber} Results</h1>
 
-    <div class="word-category-section">
-      <div class="word-display">
-        <h2>{getRegularPlayerWord()}</h2>
-        <p class="category-label">({gameState.category?.name})</p>
+    <div class="w-full text-center p-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl text-white">
+      <div>
+        <h2 class="text-5xl font-bold mb-2">{getRegularPlayerWord()}</h2>
+        <p class="text-2xl opacity-90">({gameState.category?.name})</p>
       </div>
     </div>
 
-    <div class="players-grid">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 w-full">
       {#each gameState.players as player}
-        <div class="player-card" class:impostor={player.role === 'impostor'}>
-          <h3>{player.name}</h3>
-          <p class="player-score">Score: {player.score}</p>
+        <div class="bg-white border-2 rounded-xl p-6 text-center shadow {player.role === 'impostor' ? 'border-danger bg-red-50' : 'border-gray-border'}">
+          <h3 class="mb-2 text-xl text-gray-800">{player.name}</h3>
+          <p class="mt-2 text-lg text-gray-text font-bold">Score: {player.score}</p>
           {#if player.role === 'impostor'}
-            <span class="impostor-tag">IMPOSTOR</span>
+            <span class="inline-block bg-danger text-white px-4 py-2 rounded-full text-sm font-bold mt-2">IMPOSTOR</span>
           {/if}
         </div>
       {/each}
     </div>
 
-    <div class="winner-selection">
-      <h2>Who won this round?</h2>
-      <div class="winner-buttons">
+    <div class="w-full text-center p-8 bg-gray-light rounded-xl">
+      <h2 class="mb-6 text-3xl text-gray-800">Who won this round?</h2>
+      <div class="flex gap-4 justify-center flex-wrap">
         <button
-          class="winner-button"
-          class:selected={selectedWinner === 'impostor'}
+          class="px-8 py-4 text-xl border-4 rounded-lg cursor-pointer transition-all font-bold {selectedWinner === 'impostor' ? 'bg-primary text-white border-primary' : 'bg-white text-black border-gray-border hover:border-primary hover:bg-blue-50'}"
           on:click={() => handleWinnerSelected('impostor')}
         >
           Impostor
         </button>
         <button
-          class="winner-button"
-          class:selected={selectedWinner === 'players'}
+          class="px-8 py-4 text-xl border-4 rounded-lg cursor-pointer transition-all font-bold {selectedWinner === 'players' ? 'bg-primary text-white border-primary' : 'bg-white text-black border-gray-border hover:border-primary hover:bg-blue-50'}"
           on:click={() => handleWinnerSelected('players')}
         >
           Regular Players
@@ -136,32 +134,37 @@
     </div>
 
     {#if selectedWinner}
-      <div class="action-buttons">
-        <button class="continue-button" on:click={handleContinueToNextRound}>
+      <div class="flex gap-4 flex-wrap justify-center w-full">
+        <button 
+          class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer font-bold"
+          on:click={handleContinueToNextRound}
+        >
           Continue to Next Round
         </button>
-        <button class="end-game-button" on:click={handleEndGame}>
+        <button 
+          class="px-8 py-4 text-xl bg-danger text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-red-700"
+          on:click={handleEndGame}
+        >
           End Game & Show Rankings
         </button>
       </div>
     {/if}
   </div>
 {:else}
-  <div class="reveal-screen">
-    <h1>Private Reveal</h1>
-    <p class="instructions">
+  <div class="flex flex-col gap-8 items-center">
+    <h1 class="text-center text-2xl">Private Reveal</h1>
+    <p class="text-center text-gray-text max-w-[600px]">
       Each player should view their role and word privately. <strong
         >Pass the device to each player</strong
       > - they will click their own name to view their card.
     </p>
 
-    <div class="player-selector">
-      <h2>Select a player to view their role</h2>
-      <div class="player-buttons">
+    <div class="w-full max-w-[800px]">
+      <h2 class="text-xl mb-4">Select a player to view their role</h2>
+      <div class="flex flex-wrap gap-2 justify-center">
         {#each gameState.players as player}
           <button
-            class="player-button"
-            class:active={currentViewingPlayerId === player.id}
+            class="px-6 py-3 rounded-lg cursor-pointer text-base transition-all border-2 {currentViewingPlayerId === player.id ? 'bg-primary text-white border-primary' : 'bg-gray-light border-gray-border hover:border-primary hover:bg-blue-50'}"
             on:click={() => handleViewPlayer(player.id)}
             disabled={currentViewingPlayerId !== null &&
               currentViewingPlayerId !== player.id}
@@ -174,28 +177,30 @@
 
     {#if currentViewingPlayerId && getCurrentPlayer()}
       {#if cardVisible}
-        <div class="reveal-card">
-          <h2>{getCurrentPlayer()?.name}</h2>
+        <div class="bg-white border-4 border-primary rounded-2xl p-8 max-w-[500px] text-center shadow-md">
+          <h2 class="mb-4 text-2xl">{getCurrentPlayer()?.name}</h2>
           <div
-            class="role-badge"
-            class:impostor={getCurrentPlayer()?.role === "impostor"}
+            class="inline-block px-6 py-2 rounded-full font-bold mb-6 text-lg text-white {getCurrentPlayer()?.role === 'impostor' ? 'bg-danger' : 'bg-success'}"
           >
             {getCurrentPlayer()?.role === "impostor" ? "IMPOSTOR" : "PLAYER"}
           </div>
-          <div class="info-section">
-            <p class="category">
+          <div class="text-left">
+            <p class="my-4 text-xl">
               <strong>Category:</strong>
               {gameState.category?.name}
             </p>
             {#if getCurrentPlayer()?.role !== "impostor"}
-              <p class="word">
+              <p class="text-2xl text-primary font-bold">
                 <strong>Your word:</strong>
                 {getCurrentPlayer()?.word}
               </p>
             {/if}
           </div>
-          <div class="card-actions">
-            <button class="continue-button-card" on:click={handleCloseCard}>
+          <div class="mt-6 flex gap-4 flex-col">
+            <button 
+              class="px-6 py-3 bg-gray-600 text-white border-none rounded-lg text-base font-bold cursor-pointer transition-colors hover:bg-gray-700 w-full"
+              on:click={handleCloseCard}
+            >
               Close my card
             </button>
           </div>
@@ -204,15 +209,21 @@
     {/if}
 
     {#if startingPlayer}
-      <div class="start-game-section">
-        <p class="starting-player-info">
-          <strong>{startingPlayer.name}</strong> will start the game!
+      <div class="flex flex-col items-center gap-4 mt-8">
+        <p class="text-xl text-center text-gray-800">
+          <strong class="text-primary text-2xl">{startingPlayer.name}</strong> will start the game!
         </p>
-        <div class="action-buttons-reveal">
-          <button class="reshuffle-button" on:click={handleReshuffleWord}>
+        <div class="flex gap-4 flex-wrap justify-center w-full">
+          <button 
+            class="px-8 py-4 text-xl bg-gray-600 text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-700"
+            on:click={handleReshuffleWord}
+          >
             🔀 Reshuffle Word
           </button>
-          <button class="continue-button" on:click={handleRoundFinished}>
+          <button 
+            class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer"
+            on:click={handleRoundFinished}
+          >
             Round Finished
           </button>
         </div>
@@ -220,401 +231,3 @@
     {/if}
   </div>
 {/if}
-
-<style>
-  .reveal-screen {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    align-items: center;
-  }
-
-  h1 {
-    text-align: center;
-    font-size: 2rem;
-  }
-
-  .instructions {
-    text-align: center;
-    color: #666;
-    max-width: 600px;
-  }
-
-  .player-selector {
-    width: 100%;
-    max-width: 800px;
-  }
-
-  .player-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: center;
-  }
-
-  .player-button {
-    padding: 0.75rem 1.5rem;
-    background: #f5f5f5;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
-  }
-
-  .player-button:hover {
-    border-color: #007bff;
-    background: #e7f3ff;
-  }
-
-  .player-button.active {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
-  }
-
-  .player-button.viewed {
-    opacity: 0.6;
-    position: relative;
-  }
-
-  .player-button.viewed::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(40, 167, 69, 0.2);
-    border-radius: 8px;
-    pointer-events: none;
-  }
-
-  .viewed-checkmark {
-    margin-left: 0.5rem;
-    color: #28a745;
-    font-weight: bold;
-  }
-
-  .reveal-card {
-    background: white;
-    border: 3px solid #007bff;
-    border-radius: 16px;
-    padding: 2rem;
-    max-width: 500px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .reveal-card h2 {
-    margin: 0 0 1rem 0;
-    font-size: 1.5rem;
-  }
-
-  .role-badge {
-    display: inline-block;
-    padding: 0.5rem 1.5rem;
-    background: #28a745;
-    color: white;
-    border-radius: 20px;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-  }
-
-  .role-badge.impostor {
-    background: #dc3545;
-  }
-
-  .info-section {
-    text-align: left;
-  }
-
-  .info-section p {
-    margin: 1rem 0;
-    font-size: 1.1rem;
-  }
-
-  .category {
-    font-size: 1.2rem;
-  }
-
-  .word {
-    font-size: 1.5rem;
-    color: #007bff;
-    font-weight: bold;
-  }
-
-  .word.impostor-word {
-    color: #dc3545;
-  }
-
-  .hint {
-    font-style: italic;
-    color: #666;
-    font-size: 0.9rem;
-  }
-
-  .placeholder {
-    padding: 3rem;
-    text-align: center;
-    color: #999;
-  }
-
-  .continue-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-
-  .continue-button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-
-  .start-game-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .action-buttons-reveal {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .reshuffle-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-  }
-
-  .reshuffle-button:hover {
-    background: #5a6268;
-  }
-
-  .starting-player-info {
-    font-size: 1.2rem;
-    text-align: center;
-    color: #333;
-  }
-
-  .starting-player-info strong {
-    color: #007bff;
-    font-size: 1.3rem;
-  }
-
-  .card-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    flex-direction: column;
-  }
-
-  .continue-button-card {
-    padding: 0.75rem 1.5rem;
-    background: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-  }
-
-  .continue-button-card:hover {
-    background: #5a6268;
-  }
-
-  .next-player-button {
-    padding: 0.75rem 1.5rem;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 100%;
-  }
-
-  .next-player-button:hover {
-    background: #218838;
-  }
-
-  .card-closed-message {
-    background: #f5f5f5;
-    border: 2px dashed #ddd;
-    border-radius: 12px;
-    padding: 2rem;
-    max-width: 500px;
-    text-align: center;
-  }
-
-  .card-closed-message p {
-    margin: 0 0 1.5rem 0;
-    color: #666;
-    font-size: 1rem;
-  }
-
-  .round-results-screen {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    align-items: center;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  .word-category-section {
-    width: 100%;
-    text-align: center;
-    padding: 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 16px;
-    color: white;
-  }
-
-  .word-display h2 {
-    font-size: 3rem;
-    margin: 0 0 0.5rem 0;
-    font-weight: bold;
-  }
-
-  .category-label {
-    font-size: 1.5rem;
-    margin: 0;
-    opacity: 0.9;
-  }
-
-  .players-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    width: 100%;
-  }
-
-  .player-card {
-    background: white;
-    border: 2px solid #ddd;
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .player-card.impostor {
-    border-color: #dc3545;
-    background: #fff5f5;
-  }
-
-  .player-card h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.3rem;
-    color: #333;
-  }
-
-  .impostor-tag {
-    display: inline-block;
-    background: #dc3545;
-    color: white;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin-top: 0.5rem;
-  }
-
-  .player-score {
-    margin: 0.5rem 0 0 0;
-    font-size: 1.1rem;
-    color: #666;
-    font-weight: bold;
-  }
-
-  .winner-selection {
-    width: 100%;
-    text-align: center;
-    padding: 2rem;
-    background: #f5f5f5;
-    border-radius: 12px;
-  }
-
-  .winner-selection h2 {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.8rem;
-    color: #333;
-  }
-
-  .winner-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .winner-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: white;
-    border: 3px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: bold;
-  }
-
-  .winner-button:hover {
-    border-color: #007bff;
-    background: #e7f3ff;
-  }
-
-  .winner-button.selected {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .end-game-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-  }
-
-  .end-game-button:hover {
-    background: #c82333;
-  }
-</style>

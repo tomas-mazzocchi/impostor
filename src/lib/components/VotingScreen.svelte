@@ -36,21 +36,21 @@
 	}
 </script>
 
-<div class="voting-screen">
-	<h1>Voting Phase</h1>
-	<p class="instructions">Each player votes for who they think is the impostor.</p>
+<div class="flex flex-col gap-8">
+	<h1 class="text-center text-2xl">Voting Phase</h1>
+	<p class="text-center text-gray-text">Each player votes for who they think is the impostor.</p>
 
-	<div class="voting-section">
+	<div class="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
 		{#each gameState.players as player}
-			<div class="vote-card">
-				<h3>{player.name}</h3>
+			<div class="bg-gray-light p-6 rounded-lg">
+				<h3 class="mb-4 text-center">{player.name}</h3>
 				{#if votes[player.id]}
-					<p class="voted">Voted: {getPlayerById(gameState, votes[player.id])?.name}</p>
+					<p class="text-center text-success font-bold">Voted: {getPlayerById(gameState, votes[player.id])?.name}</p>
 				{:else}
-					<div class="vote-options">
+					<div class="flex flex-col gap-2">
 						{#each gameState.players.filter((p) => p.id !== player.id) as candidate}
 							<button
-								class="vote-button"
+								class="px-3 py-3 bg-white border-2 border-primary rounded cursor-pointer transition-all hover:bg-blue-50"
 								on:click={() => handleVote(player.id, candidate.id)}
 							>
 								{candidate.name}
@@ -58,99 +58,16 @@
 						{/each}
 					</div>
 				{/if}
-				<div class="vote-count">Votes against: {getVoteCount(player.id)}</div>
+				<div class="mt-4 text-center font-bold text-gray-text">Votes against: {getVoteCount(player.id)}</div>
 			</div>
 		{/each}
 	</div>
 
 	<button
-		class="complete-button"
+		class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer self-center disabled:bg-gray-300 disabled:cursor-not-allowed"
 		disabled={!allVoted()}
 		on:click={handleCompleteVoting}
 	>
 		Complete Voting
 	</button>
 </div>
-
-<style>
-	.voting-screen {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-	}
-
-	h1 {
-		text-align: center;
-		font-size: 2rem;
-	}
-
-	.instructions {
-		text-align: center;
-		color: #666;
-	}
-
-	.voting-section {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-		gap: 1rem;
-	}
-
-	.vote-card {
-		background: #f5f5f5;
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-
-	.vote-card h3 {
-		margin: 0 0 1rem 0;
-		text-align: center;
-	}
-
-	.voted {
-		text-align: center;
-		color: #28a745;
-		font-weight: bold;
-	}
-
-	.vote-options {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.vote-button {
-		padding: 0.75rem;
-		background: white;
-		border: 2px solid #007bff;
-		border-radius: 4px;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-
-	.vote-button:hover {
-		background: #e7f3ff;
-	}
-
-	.vote-count {
-		margin-top: 1rem;
-		text-align: center;
-		font-weight: bold;
-		color: #666;
-	}
-
-	.complete-button {
-		padding: 1rem 2rem;
-		font-size: 1.2rem;
-		background: #28a745;
-		color: white;
-		border: none;
-		border-radius: 8px;
-		cursor: pointer;
-		align-self: center;
-	}
-
-	.complete-button:disabled {
-		background: #ccc;
-		cursor: not-allowed;
-	}
-</style>

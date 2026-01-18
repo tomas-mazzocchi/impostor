@@ -5,7 +5,6 @@
 
 	export let gameState: GameState;
 	export let playerNameInput: string;
-	export let sampleCategories: Category[];
 
 	const dispatch = createEventDispatcher();
 
@@ -24,25 +23,36 @@
 	$: canStartGame = gameState.players.length >= 3;
 </script>
 
-<div class="setup-screen">
-	<h1>Game Setup</h1>
+<div class="flex flex-col gap-8">
+	<h1 class="text-center text-2xl mb-4">Game Setup</h1>
 
-	<section class="players-section">
-		<h2>Players ({gameState.players.length})</h2>
-		<div class="player-input">
+	<section class="bg-gray-light p-6 rounded-lg">
+		<h2 class="text-xl mb-4">Players ({gameState.players.length})</h2>
+		<div class="flex gap-2 mb-4">
 			<input
 				type="text"
 				placeholder="Enter player name"
 				bind:value={playerNameInput}
 				on:keypress={handleKeyPress}
+				class="flex-1 p-2 border border-gray-border rounded"
 			/>
-			<button on:click={handleAddPlayer}>Add Player</button>
+			<button 
+				on:click={handleAddPlayer}
+				class="px-4 py-2 bg-primary text-white border-none rounded cursor-pointer"
+			>
+				Add Player
+			</button>
 		</div>
-		<ul class="player-list">
+		<ul class="list-none p-0 flex flex-col gap-2">
 			{#each gameState.players as player (player.id)}
-				<li>
+				<li class="flex justify-between items-center p-2 bg-white rounded">
 					<span>{player.name}</span>
-					<button on:click={() => dispatch('removePlayer', player.id)}>Remove</button>
+					<button 
+						on:click={() => dispatch('removePlayer', player.id)}
+						class="px-2 py-1 bg-danger text-white border-none rounded cursor-pointer"
+					>
+						Remove
+					</button>
 				</li>
 			{/each}
 		</ul>
@@ -67,136 +77,10 @@
 	</section> -->
 
 	<button
-		class="start-button"
+		class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer self-center disabled:bg-gray-300 disabled:cursor-not-allowed"
 		disabled={!canStartGame}
 		on:click={() => dispatch('startGame')}
 	>
 		Start Game
 	</button>
 </div>
-
-<style>
-	.setup-screen {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-	}
-
-	h1 {
-		text-align: center;
-		font-size: 2rem;
-		margin-bottom: 1rem;
-	}
-
-	h2 {
-		font-size: 1.5rem;
-		margin-bottom: 1rem;
-	}
-
-	.players-section,
-	.category-section {
-		background: #f5f5f5;
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-
-	.player-input {
-		display: flex;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
-	}
-
-	.player-input input {
-		flex: 1;
-		padding: 0.5rem;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-	}
-
-	.player-input button {
-		padding: 0.5rem 1rem;
-		background: #007bff;
-		color: white;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-
-	.player-list {
-		list-style: none;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.player-list li {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 0.5rem;
-		background: white;
-		border-radius: 4px;
-	}
-
-	.player-list button {
-		padding: 0.25rem 0.5rem;
-		background: #dc3545;
-		color: white;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-
-	.category-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		gap: 1rem;
-	}
-
-	.category-card {
-		padding: 1.5rem;
-		background: white;
-		border: 2px solid #ddd;
-		border-radius: 8px;
-		cursor: pointer;
-		text-align: center;
-		transition: all 0.2s;
-	}
-
-	.category-card:hover {
-		border-color: #007bff;
-		transform: translateY(-2px);
-	}
-
-	.category-card.selected {
-		border-color: #007bff;
-		background: #e7f3ff;
-	}
-
-	.category-card h3 {
-		margin: 0 0 0.5rem 0;
-	}
-
-	.category-card p {
-		margin: 0;
-		font-size: 0.9rem;
-		color: #666;
-	}
-
-	.start-button {
-		padding: 1rem 2rem;
-		font-size: 1.2rem;
-		background: #28a745;
-		color: white;
-		border: none;
-		border-radius: 8px;
-		cursor: pointer;
-		align-self: center;
-	}
-
-	.start-button:disabled {
-		background: #ccc;
-		cursor: not-allowed;
-	}
-</style>

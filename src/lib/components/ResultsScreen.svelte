@@ -10,35 +10,35 @@
 	const impostor = getImpostor(gameState);
 </script>
 
-<div class="results-screen">
-	<h1>Game Over!</h1>
+<div class="flex flex-col gap-8 items-center">
+	<h1 class="text-center text-4xl">Game Over!</h1>
 
-	<div class="result-card" class:impostor-won={gameState.winner === 'impostor'}>
+	<div class="p-8 rounded-2xl text-center max-w-[500px] text-white {gameState.winner === 'impostor' ? 'bg-danger' : 'bg-success'}">
 		{#if gameState.winner === 'impostor'}
-			<h2 class="result-title">Impostor Wins!</h2>
-			<p class="result-message">The impostor successfully avoided detection.</p>
+			<h2 class="text-3xl mb-2 m-0">Impostor Wins!</h2>
+			<p class="text-xl m-0">The impostor successfully avoided detection.</p>
 		{:else}
-			<h2 class="result-title">Players Win!</h2>
-			<p class="result-message">The impostor was caught!</p>
+			<h2 class="text-3xl mb-2 m-0">Players Win!</h2>
+			<p class="text-xl m-0">The impostor was caught!</p>
 		{/if}
 	</div>
 
-	<div class="reveal-section">
-		<h2>The Impostor was:</h2>
-		<div class="impostor-reveal">
-			<h3>{impostor?.name}</h3>
-			<p class="impostor-badge">IMPOSTOR</p>
+	<div class="text-center">
+		<h2 class="text-2xl mb-4">The Impostor was:</h2>
+		<div class="bg-gray-light p-8 rounded-xl mt-4">
+			<h3 class="text-3xl mb-2 m-0 text-danger">{impostor?.name}</h3>
+			<p class="inline-block bg-danger text-white px-6 py-2 rounded-full font-bold m-0">IMPOSTOR</p>
 		</div>
 	</div>
 
-	<div class="words-section">
-		<h2>All Words</h2>
-		<div class="words-list">
+	<div class="bg-gray-light p-6 rounded-lg max-w-[600px] w-full">
+		<h2 class="text-xl mb-4">All Words</h2>
+		<div class="flex flex-col gap-2 mt-4">
 			{#each gameState.players as player}
-				<div class="word-item">
+				<div class="bg-white p-3 rounded">
 					<strong>{player.name}:</strong>
 					{#if player.role === 'impostor'}
-						<span class="impostor-word">??? (Impostor - didn't know the word)</span>
+						<span class="text-danger italic">??? (Impostor - didn't know the word)</span>
 					{:else}
 						<span>{player.word}</span>
 					{/if}
@@ -47,111 +47,10 @@
 		</div>
 	</div>
 
-	<button class="new-game-button" on:click={() => dispatch('newGame')}>
+	<button 
+		class="px-8 py-4 text-xl bg-primary text-white border-none rounded-lg cursor-pointer transition-colors hover:bg-blue-700"
+		on:click={() => dispatch('newGame')}
+	>
 		New Game
 	</button>
 </div>
-
-<style>
-	.results-screen {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-		align-items: center;
-	}
-
-	h1 {
-		text-align: center;
-		font-size: 2.5rem;
-	}
-
-	.result-card {
-		background: #28a745;
-		color: white;
-		padding: 2rem;
-		border-radius: 16px;
-		text-align: center;
-		max-width: 500px;
-	}
-
-	.result-card.impostor-won {
-		background: #dc3545;
-	}
-
-	.result-title {
-		font-size: 2rem;
-		margin: 0 0 0.5rem 0;
-	}
-
-	.result-message {
-		font-size: 1.2rem;
-		margin: 0;
-	}
-
-	.reveal-section {
-		text-align: center;
-	}
-
-	.impostor-reveal {
-		background: #f5f5f5;
-		padding: 2rem;
-		border-radius: 12px;
-		margin-top: 1rem;
-	}
-
-	.impostor-reveal h3 {
-		font-size: 1.8rem;
-		margin: 0 0 0.5rem 0;
-		color: #dc3545;
-	}
-
-	.impostor-badge {
-		display: inline-block;
-		background: #dc3545;
-		color: white;
-		padding: 0.5rem 1.5rem;
-		border-radius: 20px;
-		font-weight: bold;
-		margin: 0;
-	}
-
-	.words-section {
-		background: #f5f5f5;
-		padding: 1.5rem;
-		border-radius: 8px;
-		max-width: 600px;
-		width: 100%;
-	}
-
-	.words-list {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		margin-top: 1rem;
-	}
-
-	.word-item {
-		background: white;
-		padding: 0.75rem;
-		border-radius: 4px;
-	}
-
-	.impostor-word {
-		color: #dc3545;
-		font-style: italic;
-	}
-
-	.new-game-button {
-		padding: 1rem 2rem;
-		font-size: 1.2rem;
-		background: #007bff;
-		color: white;
-		border: none;
-		border-radius: 8px;
-		cursor: pointer;
-	}
-
-	.new-game-button:hover {
-		background: #0056b3;
-	}
-</style>

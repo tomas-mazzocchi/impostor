@@ -26,34 +26,34 @@
 	}
 </script>
 
-<div class="game-screen">
-	<h1>Game in Progress</h1>
+<div class="flex flex-col gap-8">
+	<h1 class="text-center text-2xl">Game in Progress</h1>
 
-	<div class="game-info">
-		<div class="info-card">
-			<h2>Category</h2>
-			<p class="category-name">{gameState.category?.name}</p>
+	<div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+		<div class="bg-gray-light p-6 rounded-lg text-center">
+			<h2 class="mb-2 text-base text-gray-text">Category</h2>
+			<p class="text-2xl font-bold text-primary m-0">{gameState.category?.name}</p>
 		</div>
-		<div class="info-card">
-			<h2>Current Phase</h2>
-			<p>Players are giving clues and discussing</p>
+		<div class="bg-gray-light p-6 rounded-lg text-center">
+			<h2 class="mb-2 text-base text-gray-text">Current Phase</h2>
+			<p class="m-0">Players are giving clues and discussing</p>
 		</div>
 	</div>
 
-	<div class="players-section">
-		<h2>Players</h2>
-		<div class="players-grid">
+	<div class="bg-gray-light p-6 rounded-lg">
+		<h2 class="text-xl mb-4">Players</h2>
+		<div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 mt-4">
 			{#each gameState.players as player}
-				<div class="player-card">
-					<h3>{player.name}</h3>
+				<div class="bg-white p-4 rounded-lg text-center">
+					<h3 class="mb-2">{player.name}</h3>
 					{#if gameState.accusations[player.id]}
-						<p class="accusation">
+						<p class="text-danger font-bold mt-2 m-0">
 							Accuses: {getPlayerById(gameState, gameState.accusations[player.id])?.name}
 						</p>
 					{:else}
-						<div class="accuse-section">
+						<div class="mt-2">
 							<select
-								class="accuse-select"
+								class="w-full p-2 border-2 border-primary rounded cursor-pointer"
 								bind:value={selectedAccused[player.id]}
 								on:change={() => {
 									if (selectedAccused[player.id]) {
@@ -73,117 +73,15 @@
 		</div>
 	</div>
 
-	<div class="progress">
+	<div class="text-center text-lg">
 		<p>Accusations: {getAccusationCount()} / {gameState.players.length}</p>
 	</div>
 
 	<button
-		class="voting-button"
+		class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer self-center disabled:bg-gray-300 disabled:cursor-not-allowed"
 		disabled={!canStartVoting()}
 		on:click={handleStartVoting}
 	>
 		Start Voting Phase
 	</button>
 </div>
-
-<style>
-	.game-screen {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-	}
-
-	h1 {
-		text-align: center;
-		font-size: 2rem;
-	}
-
-	.game-info {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		gap: 1rem;
-	}
-
-	.info-card {
-		background: #f5f5f5;
-		padding: 1.5rem;
-		border-radius: 8px;
-		text-align: center;
-	}
-
-	.info-card h2 {
-		margin: 0 0 0.5rem 0;
-		font-size: 1rem;
-		color: #666;
-	}
-
-	.category-name {
-		font-size: 1.5rem;
-		font-weight: bold;
-		color: #007bff;
-		margin: 0;
-	}
-
-	.players-section {
-		background: #f5f5f5;
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-
-	.players-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		gap: 1rem;
-		margin-top: 1rem;
-	}
-
-	.player-card {
-		background: white;
-		padding: 1rem;
-		border-radius: 8px;
-		text-align: center;
-	}
-
-	.player-card h3 {
-		margin: 0 0 0.5rem 0;
-	}
-
-	.accusation {
-		color: #dc3545;
-		font-weight: bold;
-		margin: 0.5rem 0 0 0;
-	}
-
-	.accuse-section {
-		margin-top: 0.5rem;
-	}
-
-	.accuse-select {
-		width: 100%;
-		padding: 0.5rem;
-		border: 2px solid #007bff;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-
-	.progress {
-		text-align: center;
-		font-size: 1.1rem;
-	}
-
-	.voting-button {
-		padding: 1rem 2rem;
-		font-size: 1.2rem;
-		background: #28a745;
-		color: white;
-		border: none;
-		border-radius: 8px;
-		cursor: pointer;
-		align-self: center;
-	}
-
-	.voting-button:disabled {
-		background: #ccc;
-		cursor: not-allowed;
-	}
-</style>
