@@ -154,6 +154,41 @@ The game currently supports local mode (single device). Players pass the device 
 ### Reports
 - `POST /api/reports` - Report inappropriate content (requires auth)
 
+## Deployment to Vercel (Free)
+
+### Quick Deploy
+
+1. **Push your code to GitHub/GitLab/Bitbucket**
+
+2. **Install the Vercel adapter** (if not already installed):
+   ```bash
+   npm install
+   ```
+
+3. **Go to [vercel.com](https://vercel.com)** and sign in
+
+4. **Import your repository**:
+   - Click "Add New..." → "Project"
+   - Select your repository
+   - Vercel will auto-detect SvelteKit
+
+5. **Configure Environment Variables**:
+   In Vercel project settings → Environment Variables, add:
+   - `PUBLIC_SUPABASE_URL`
+   - `PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+
+6. **Deploy**: Click "Deploy" and wait 2-3 minutes
+
+7. **Run database migrations**:
+   - Go to Supabase SQL Editor
+   - Run `supabase/migrations/001_initial_schema.sql`
+   - Run `supabase/migrations/002_seed_sample_data.sql`
+
+Your app will be live at `your-project.vercel.app`!
+
+For detailed instructions, see [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md)
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
