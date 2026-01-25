@@ -13,7 +13,8 @@
 		recordRoundScores,
 		startNextRound,
 		showFinalResults,
-		reshuffleWord
+		reshuffleWord,
+		resetGameWithSamePlayers
 	} from '$lib/game/local-mode';
 	import SetupScreen from '$lib/components/SetupScreen.svelte';
 	import RevealScreen from '$lib/components/RevealScreen.svelte';
@@ -24,6 +25,7 @@
 	let playerNameInput = '';
 	let currentViewingPlayerId: string | null = null;
 	let viewedPlayers: Set<string> = new Set();
+	let showNewGameModal = false;
 
 	let sampleCategories: Category[] = [];
 	let sampleWords: Word[] = [];
@@ -120,9 +122,25 @@
 	}
 
 	function handleNewGame() {
+		showNewGameModal = true;
+	}
+
+	function handleKeepPlayers() {
+		gameState = resetGameWithSamePlayers(gameState, sampleWords, sampleCategories);
+		currentViewingPlayerId = null;
+		viewedPlayers = new Set();
+		showNewGameModal = false;
+	}
+
+	function handleNewPlayers() {
 		gameState = createInitialState();
 		currentViewingPlayerId = null;
 		viewedPlayers = new Set();
+		showNewGameModal = false;
+	}
+
+	function handleCancelNewGame() {
+		showNewGameModal = false;
 	}
 
 	function handleViewPlayer(playerId: string) {
@@ -196,5 +214,50 @@
 		/>
 	{:else if gameState.phase === 'finalResults'}
 		<FinalResultsScreen {gameState} on:newGame={handleNewGame} />
+	{/if}
+
+	<!-- New Game Modal -->
+	{#if showNewGameModal}
+		<div 
+			class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
+			role="button"
+			tabindex="0"
+			on:click={handleCancelNewGame}
+			on:keydown={(e) => e.key === 'Escape' && handleCancelNewGame()}
+		>
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+			<div 
+				class="bg-white rounded-2xl p-8 max-w-[500px] w-full mx-4 shadow-2xl" 
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="modal-title"
+				on:click={(e) => e.stopPropagation()}
+			>
+				<h2 id="modal-title" class="text-3xl font-bold text-center mb-6 text-gray-800">New Game</h2>
+				<p class="text-lg text-center mb-8 text-gray-600">Do you want to keep the same players?</p>
+				
+				<div class="flex flex-col gap-4">
+					<button
+						class="px-8 py-4 text-xl bg-primary text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-blue-700"
+						on:click={handleKeepPlayers}
+					>
+						Keep Same Players
+					</button>
+					<button
+						class="px-8 py-4 text-xl bg-gray-600 text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-700"
+						on:click={handleNewPlayers}
+					>
+						New Players
+					</button>
+					<button
+						class="px-6 py-3 text-base bg-transparent text-gray-600 border-2 border-gray-300 rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-100"
+						on:click={handleCancelNewGame}
+					>
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
 	{/if}
 </div>

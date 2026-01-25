@@ -14,6 +14,57 @@ export function createInitialState(): GameState {
 	};
 }
 
+export function resetGameWithSamePlayers(
+	state: GameState,
+	allWords: Word[],
+	categories: Category[]
+): GameState {
+	if (state.players.length < 3) {
+		throw new Error('Need at least 3 players');
+	}
+	if (allWords.length === 0) {
+		throw new Error('No words available');
+	}
+	if (categories.length === 0) {
+		throw new Error('No categories available');
+	}
+
+	// Pick a random word from ALL words first
+	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
+	const selectedWord = shuffledWords[0];
+
+	// Find the category that matches the word's categoryId
+	const category = findCategoryByWord(categories, selectedWord);
+	if (!category) {
+		throw new Error(`No category found for word: ${selectedWord.word}`);
+	}
+
+	const impostorIndex = Math.floor(Math.random() * state.players.length);
+	const startingPlayerIndex = Math.floor(Math.random() * state.players.length);
+
+	// Pick one word for all regular players
+	const regularPlayerWord = selectedWord.word;
+
+	const playersWithWords = state.players.map((player, index) => {
+		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
+		const word = role === 'impostor' ? null : regularPlayerWord;
+		return { ...player, role, word, score: 0 };
+	});
+
+	return {
+		...state,
+		phase: 'reveal',
+		category,
+		players: playersWithWords,
+		words: shuffledWords,
+		impostorIndex,
+		currentPlayerIndex: startingPlayerIndex,
+		roundNumber: 1,
+		accusations: {},
+		winner: null
+	};
+}
+
 export function addPlayer(state: GameState, name: string): GameState {
 	const newPlayer: Player = {
 		id: crypto.randomUUID(),
