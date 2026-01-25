@@ -50,7 +50,7 @@
               <span>if wins by not being discovered (reaches the end without expulsion)</span>
             </li>
             <li class="flex items-start gap-2">
-              <span class="text-primary font-bold">+3</span>
+              <span class="text-primary font-bold">+2</span>
               <span>if expelled but guesses the word correctly</span>
             </li>
           </ul>

@@ -263,11 +263,11 @@ export function recordRoundScores(state: GameState, roundResult: RoundResult): G
 
 			if (!impostorExpelled) {
 				// +5 if wins by not being discovered
-				scoreIncrease += 5;
-			} else if (impostorGuessedWord) {
-				// +3 if expelled but guessed the word
-				scoreIncrease += 3;
-			}
+			scoreIncrease += 5;
+		} else if (impostorGuessedWord) {
+			// +2 if expelled but guessed the word
+			scoreIncrease += 2;
+		}
 		} else if (player.role === 'regular') {
 			if (impostorExpelled) {
 				// All regular players get +2 if impostor was expelled
