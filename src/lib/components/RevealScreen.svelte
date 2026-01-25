@@ -3,6 +3,7 @@
   import { createEventDispatcher } from "svelte";
   import { getPlayerById, getImpostor, getPlayersByScore } from "$lib/game/local-mode";
   import StandingsTable from "./StandingsTable.svelte";
+  import HelpButton from "./HelpButton.svelte";
 
   export let gameState: GameState;
   export let currentViewingPlayerId: string | null = null;
@@ -190,6 +191,8 @@
 
   const impostor = getImpostor(gameState);
 </script>
+
+<HelpButton />
 
 {#if showRoundResults}
   <div class="flex flex-col gap-8 items-center w-full max-w-[1000px] mx-auto">

@@ -2,6 +2,7 @@
 	import type { GameState, Category } from '$lib/game/types';
 	import { createEventDispatcher } from 'svelte';
 	import { onMount } from 'svelte';
+	import HelpButton from './HelpButton.svelte';
 
 	export let gameState: GameState;
 	export let playerNameInput: string;
@@ -22,6 +23,8 @@
 
 	$: canStartGame = gameState.players.length >= 3;
 </script>
+
+<HelpButton />
 
 <div class="flex flex-col gap-8">
 	<h1 class="text-center text-2xl mb-4">Game Setup</h1>
