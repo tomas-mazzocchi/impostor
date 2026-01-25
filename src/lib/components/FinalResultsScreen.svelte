@@ -14,14 +14,14 @@
 </script>
 
 <div class="flex flex-col gap-8 items-center w-full max-w-[800px] mx-auto">
-  <h1 class="text-center text-4xl text-gray-800">Final Rankings</h1>
+  <h1 class="text-center text-4xl text-gray-800">Clasificación Final</h1>
 
   <div class="bg-gradient-to-br from-yellow-300 to-orange-400 p-8 rounded-2xl text-center w-full shadow-md">
     {#if winners.length === 1}
-      <h2 class="text-3xl mb-2 text-gray-800">🏆 Winner: {winners[0].name} 🏆</h2>
-      <p class="text-2xl mt-2 text-gray-700 font-bold">Final Score: {winners[0].score} points</p>
+      <h2 class="text-3xl mb-2 text-gray-800">🏆 Ganador: {winners[0].name} 🏆</h2>
+      <p class="text-2xl mt-2 text-gray-700 font-bold">Puntaje Final: {winners[0].score} puntos</p>
     {:else}
-      <h2 class="text-3xl mb-2 text-gray-800">🏆 Winners 🏆</h2>
+      <h2 class="text-3xl mb-2 text-gray-800">🏆 Ganadores 🏆</h2>
       <div class="flex flex-wrap gap-3 justify-center my-4">
         {#each winners as winner}
           <div class="bg-white/30 px-4 py-2 rounded-full text-xl font-bold">
@@ -29,7 +29,7 @@
           </div>
         {/each}
       </div>
-      <p class="text-2xl mt-2 text-gray-700 font-bold">Final Score: {highestScore} points</p>
+      <p class="text-2xl mt-2 text-gray-700 font-bold">Puntaje Final: {highestScore} puntos</p>
     {/if}
   </div>
 
@@ -41,6 +41,6 @@
     class="px-8 py-4 text-xl bg-primary text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-blue-700"
     on:click={() => dispatch('newGame')}
   >
-    New Game
+    Nuevo Juego
   </button>
 </div>

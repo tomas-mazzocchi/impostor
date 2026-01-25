@@ -43,12 +43,12 @@
 				fetch('/api/words')
 			]);
 
-			if (!categoriesResponse.ok) {
-				throw new Error('Failed to load categories');
-			}
-			if (!wordsResponse.ok) {
-				throw new Error('Failed to load words');
-			}
+		if (!categoriesResponse.ok) {
+			throw new Error('Error al cargar las categorías');
+		}
+		if (!wordsResponse.ok) {
+			throw new Error('Error al cargar las palabras');
+		}
 
 			const categoriesData = await categoriesResponse.json();
 			const wordsData = await wordsResponse.json();
@@ -61,10 +61,10 @@
 			}));
 
 			// Words are already in the correct format from the API
-			sampleWords = wordsData.words || [];
-		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to load game data';
-			console.error('Error loading game data:', err);
+		sampleWords = wordsData.words || [];
+	} catch (err) {
+		error = err instanceof Error ? err.message : 'Error al cargar los datos del juego';
+		console.error('Error loading game data:', err);
 		} finally {
 			loading = false;
 		}
@@ -160,20 +160,20 @@
 </script>
 
 <div class="min-h-screen p-8 max-w-[1200px] mx-auto">
-	{#if loading}
-		<div class="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center">
-			<p>Loading game data...</p>
-		</div>
-	{:else if error}
-		<div class="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center">
-			<h2 class="text-danger m-0">Error loading game data</h2>
-			<p>{error}</p>
-			<button 
-				class="px-6 py-3 bg-primary text-white border-none rounded-lg cursor-pointer text-base transition-colors hover:bg-blue-700"
-				on:click={loadGameData}
-			>
-				Retry
-			</button>
+{#if loading}
+	<div class="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center">
+		<p>Cargando datos del juego...</p>
+	</div>
+{:else if error}
+	<div class="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center">
+		<h2 class="text-danger m-0">Error al cargar los datos del juego</h2>
+		<p>{error}</p>
+		<button 
+			class="px-6 py-3 bg-primary text-white border-none rounded-lg cursor-pointer text-base transition-colors hover:bg-blue-700"
+			on:click={loadGameData}
+		>
+			Reintentar
+		</button>
 		</div>
 	{:else if gameState.phase === 'setup'}
 		<SetupScreen
@@ -234,27 +234,27 @@
 				aria-labelledby="modal-title"
 				on:click={(e) => e.stopPropagation()}
 			>
-				<h2 id="modal-title" class="text-3xl font-bold text-center mb-6 text-gray-800">New Game</h2>
-				<p class="text-lg text-center mb-8 text-gray-600">Do you want to keep the same players?</p>
+				<h2 id="modal-title" class="text-3xl font-bold text-center mb-6 text-gray-800">Nuevo Juego</h2>
+				<p class="text-lg text-center mb-8 text-gray-600">¿Querés mantener a los mismos jugadores?</p>
 				
 				<div class="flex flex-col gap-4">
 					<button
 						class="px-8 py-4 text-xl bg-primary text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-blue-700"
 						on:click={handleKeepPlayers}
 					>
-						Keep Same Players
+						Mantener Jugadores
 					</button>
 					<button
 						class="px-8 py-4 text-xl bg-gray-600 text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-700"
 						on:click={handleNewPlayers}
 					>
-						New Players
+						Nuevos Jugadores
 					</button>
 					<button
 						class="px-6 py-3 text-base bg-transparent text-gray-600 border-2 border-gray-300 rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-100"
 						on:click={handleCancelNewGame}
 					>
-						Cancel
+						Cancelar
 					</button>
 				</div>
 			</div>

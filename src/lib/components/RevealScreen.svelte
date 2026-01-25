@@ -196,7 +196,7 @@
 
 {#if showRoundResults}
   <div class="flex flex-col gap-8 items-center w-full max-w-[1000px] mx-auto">
-    <h1 class="text-center text-2xl">Round {gameState.roundNumber} Results</h1>
+    <h1 class="text-center text-2xl">Resultados de la Ronda {gameState.roundNumber}</h1>
 
     <div class="w-full text-center p-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl text-white">
       <div>
@@ -208,13 +208,13 @@
     {#if currentQuestionIndex === 0}
       <!-- Question 1: Was the impostor expelled? -->
       <div class="w-full text-center p-8 bg-gray-light rounded-xl">
-        <h2 class="mb-6 text-3xl text-gray-800">Was the impostor expelled?</h2>
+        <h2 class="mb-6 text-3xl text-gray-800">¿Fue expulsado el impostor?</h2>
         <div class="flex gap-4 justify-center flex-wrap">
           <button
             class="px-8 py-4 text-xl border-4 rounded-lg cursor-pointer transition-all font-bold {impostorExpelled === true ? 'bg-primary text-white border-primary' : 'bg-white text-black border-gray-border hover:border-primary hover:bg-blue-50'}"
             on:click={() => handleImpostorExpelledSelected(true)}
           >
-            Yes
+            Sí
           </button>
           <button
             class="px-8 py-4 text-xl border-4 rounded-lg cursor-pointer transition-all font-bold {impostorExpelled === false ? 'bg-primary text-white border-primary' : 'bg-white text-black border-gray-border hover:border-primary hover:bg-blue-50'}"
@@ -227,8 +227,8 @@
     {:else if currentQuestionIndex === 1 && impostorExpelled === true}
       <!-- Question 2: Who expelled the impostor? -->
       <div class="w-full text-center p-8 bg-gray-light rounded-xl">
-        <h2 class="mb-6 text-3xl text-gray-800">Who expelled the impostor?</h2>
-        <p class="mb-6 text-lg text-gray-text">Select all players who voted to expel the impostor</p>
+        <h2 class="mb-6 text-3xl text-gray-800">¿Quién expulsó al impostor?</h2>
+        <p class="mb-6 text-lg text-gray-text">Seleccioná a todos los jugadores que votaron para expulsar al impostor</p>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 w-full mt-4">
           {#each players.filter(p => p.role === 'regular') as player}
             <button
@@ -240,13 +240,13 @@
           {/each}
         </div>
         {#if expellers.size === 0}
-          <p class="mt-4 text-lg text-gray-text">Select at least one player to continue</p>
+          <p class="mt-4 text-lg text-gray-text">Seleccioná al menos un jugador para continuar</p>
         {/if}
       </div>
     {:else if currentQuestionIndex === 2 && impostorExpelled === true}
       <!-- Question 3: How many rounds did the impostor survive? -->
       <div class="w-full text-center p-8 bg-gray-light rounded-xl">
-        <h2 class="mb-6 text-3xl text-gray-800">How many rounds did the impostor survive?</h2>
+        <h2 class="mb-6 text-3xl text-gray-800">¿Cuántas rondas sobrevivió el impostor?</h2>
         <div class="flex items-center justify-center gap-4">
           <button
             class="w-8 h-8 text-xl bg-danger text-white border-none rounded-full cursor-pointer font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center leading-none"
@@ -270,13 +270,13 @@
     {:else if currentQuestionIndex === 3 && impostorExpelled === true}
       <!-- Question 4: Did the impostor guess the word? -->
       <div class="w-full text-center p-8 bg-gray-light rounded-xl">
-        <h2 class="mb-6 text-3xl text-gray-800">Did the impostor guess the word?</h2>
+        <h2 class="mb-6 text-3xl text-gray-800">¿Adivinó la palabra el impostor?</h2>
         <div class="flex gap-4 justify-center flex-wrap">
           <button
             class="px-8 py-4 text-xl border-4 rounded-lg cursor-pointer transition-all font-bold {impostorGuessedWord === true ? 'bg-primary text-white border-primary' : 'bg-white text-black border-gray-border hover:border-primary hover:bg-blue-50'}"
             on:click={() => handleImpostorGuessedWord(true)}
           >
-            Yes
+            Sí
           </button>
           <button
             class="px-8 py-4 text-xl border-4 rounded-lg cursor-pointer transition-all font-bold {impostorGuessedWord === false ? 'bg-primary text-white border-primary' : 'bg-white text-black border-gray-border hover:border-primary hover:bg-blue-50'}"
@@ -313,8 +313,8 @@
           class="px-6 py-3 text-lg underline border-none rounded-lg cursor-pointer font-bold hover:bg-purple-700 flex items-center justify-center gap-2"
           on:click={handleShowStandings}
         >
-          <span>Show Standings</span>
-          <img src="/podium.png" class="w-5 h-5" alt="Podium" />
+          <span>Ver Posiciones</span>
+          <img src="/podium.png" class="w-5 h-5" alt="Podio" />
         </button>
         <div class="flex gap-4 flex-wrap justify-center w-full">
           <button 
@@ -322,14 +322,14 @@
             disabled={!isAllQuestionsAnswered}
             on:click={handleContinueToNextRound}
           >
-            Continue to Next Round
+            Siguiente Ronda
           </button>
           <button 
             class="px-8 py-4 text-xl bg-danger text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             disabled={!isAllQuestionsAnswered}
             on:click={handleEndGame}
           >
-            End Game
+            Terminar Juego
           </button>
         </div>
       </div>
@@ -354,15 +354,15 @@
         aria-labelledby="standings-title"
         on:click={(e) => e.stopPropagation()}
       >
-        <h2 id="standings-title" class="text-3xl font-bold text-center mb-6 text-gray-800">Current Standings</h2>
-        <span>These are the standings up to the previous round</span>
+        <h2 id="standings-title" class="text-3xl font-bold text-center mb-6 text-gray-800">Posiciones Actuales</h2>
+        <span>Estas son las posiciones hasta la ronda anterior</span>
         {#if highestScoreForModal > 0}
           <div class="bg-gradient-to-br from-yellow-300 to-orange-400 p-6 rounded-2xl text-center w-full shadow-md mb-4">
             {#if topPlayersForModal.length === 1}
               <h3 class="text-2xl mb-1 text-gray-800">🏆 {topPlayersForModal[0].name} 🏆</h3>
-              <p class="text-lg text-gray-700 font-bold">{topPlayersForModal[0].score} points</p>
+              <p class="text-lg text-gray-700 font-bold">{topPlayersForModal[0].score} puntos</p>
             {:else}
-              <h3 class="text-2xl mb-1 text-gray-800">🏆 Leading 🏆</h3>
+              <h3 class="text-2xl mb-1 text-gray-800">🏆 Liderando 🏆</h3>
               <div class="flex flex-wrap gap-2 justify-center my-2">
                 {#each topPlayersForModal as player}
                   <div class="bg-white/30 px-3 py-1 rounded-full text-base font-bold">
@@ -370,7 +370,7 @@
                   </div>
                 {/each}
               </div>
-              <p class="text-lg text-gray-700 font-bold">{highestScoreForModal} points</p>
+              <p class="text-lg text-gray-700 font-bold">{highestScoreForModal} puntos</p>
             {/if}
           </div>
         {/if}
@@ -381,22 +381,22 @@
           class="mt-6 w-full px-6 py-3 text-lg bg-primary text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-blue-700"
           on:click={handleCloseStandings}
         >
-          Close
+          Cerrar
         </button>
       </div>
     </div>
   {/if}
 {:else}
   <div class="flex flex-col gap-8 items-center">
-    <h1 class="text-center text-2xl">Private Reveal</h1>
+    <h1 class="text-center text-2xl">Revelación Privada</h1>
     <p class="text-center text-gray-text max-w-[600px]">
-      Each player should view their role and word privately. <strong
-        >Pass the device to each player</strong
-      > - they will click their own name to view their card.
+      Cada jugador debe ver su rol y palabra en privado. <strong
+        >Pasá el dispositivo a cada jugador</strong
+      > - van a hacer clic en su propio nombre para ver su tarjeta.
     </p>
 
     <div class="w-full max-w-[800px]">
-      <h2 class="text-xl mb-4">Select a player to view their role</h2>
+      <h2 class="text-xl mb-4">Seleccioná un jugador para ver su rol</h2>
       <div class="flex flex-wrap gap-2 justify-center">
         {#each players as player}
           <button
@@ -418,16 +418,16 @@
           <div
             class="inline-block px-6 py-2 rounded-full font-bold mb-6 text-lg text-white {getCurrentPlayer()?.role === 'impostor' ? 'bg-danger' : 'bg-success'}"
           >
-            {getCurrentPlayer()?.role === "impostor" ? "IMPOSTOR" : "PLAYER"}
+            {getCurrentPlayer()?.role === "impostor" ? "IMPOSTOR" : "JUGADOR"}
           </div>
           <div class="text-left">
             <p class="my-4 text-xl">
-              <strong>Category:</strong>
+              <strong>Categoría:</strong>
               {gameState.category?.name}
             </p>
             {#if getCurrentPlayer()?.role !== "impostor"}
               <p class="text-2xl text-primary font-bold">
-                <strong>Your word:</strong>
+                <strong>Tu palabra:</strong>
                 {getCurrentPlayer()?.word}
               </p>
             {/if}
@@ -437,7 +437,7 @@
               class="px-6 py-3 bg-gray-600 text-white border-none rounded-lg text-base font-bold cursor-pointer transition-colors hover:bg-gray-700 w-full"
               on:click={handleCloseCard}
             >
-              Close my card
+              Cerrar mi tarjeta
             </button>
           </div>
         </div>
@@ -447,20 +447,20 @@
     {#if startingPlayer}
       <div class="flex flex-col items-center gap-4 mt-8">
         <p class="text-xl text-center text-gray-800">
-          <strong class="text-primary text-2xl">{startingPlayer.name}</strong> will start the game!
+          <strong class="text-primary text-2xl">{startingPlayer.name}</strong> va a empezar el juego!
         </p>
         <div class="flex gap-4 flex-wrap justify-center w-full">
           <button 
             class="px-8 py-4 text-xl bg-gray-600 text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-700"
             on:click={handleReshuffleWord}
           >
-            🔀 Reshuffle Word
+            🔀 Cambiar Palabra
           </button>
           <button 
             class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer"
             on:click={handleRoundFinished}
           >
-            Round Finished
+            Ronda Terminada
           </button>
         </div>
       </div>

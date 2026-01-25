@@ -27,28 +27,28 @@
 </script>
 
 <div class="flex flex-col gap-8">
-	<h1 class="text-center text-2xl">Game in Progress</h1>
+	<h1 class="text-center text-2xl">Juego en Curso</h1>
 
 	<div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
 		<div class="bg-gray-light p-6 rounded-lg text-center">
-			<h2 class="mb-2 text-base text-gray-text">Category</h2>
+			<h2 class="mb-2 text-base text-gray-text">Categoría</h2>
 			<p class="text-2xl font-bold text-primary m-0">{gameState.category?.name}</p>
 		</div>
 		<div class="bg-gray-light p-6 rounded-lg text-center">
-			<h2 class="mb-2 text-base text-gray-text">Current Phase</h2>
-			<p class="m-0">Players are giving clues and discussing</p>
+			<h2 class="mb-2 text-base text-gray-text">Fase Actual</h2>
+			<p class="m-0">Los jugadores están dando pistas y discutiendo</p>
 		</div>
 	</div>
 
 	<div class="bg-gray-light p-6 rounded-lg">
-		<h2 class="text-xl mb-4">Players</h2>
+		<h2 class="text-xl mb-4">Jugadores</h2>
 		<div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 mt-4">
 			{#each gameState.players as player}
 				<div class="bg-white p-4 rounded-lg text-center">
 					<h3 class="mb-2">{player.name}</h3>
 					{#if gameState.accusations[player.id]}
 						<p class="text-danger font-bold mt-2 m-0">
-							Accuses: {getPlayerById(gameState, gameState.accusations[player.id])?.name}
+							Acusa a: {getPlayerById(gameState, gameState.accusations[player.id])?.name}
 						</p>
 					{:else}
 						<div class="mt-2">
@@ -61,7 +61,7 @@
 									}
 								}}
 							>
-								<option value="">Select player to accuse</option>
+								<option value="">Seleccioná jugador a acusar</option>
 								{#each gameState.players.filter((p) => p.id !== player.id) as candidate}
 									<option value={candidate.id}>{candidate.name}</option>
 								{/each}
@@ -74,7 +74,7 @@
 	</div>
 
 	<div class="text-center text-lg">
-		<p>Accusations: {getAccusationCount()} / {gameState.players.length}</p>
+		<p>Acusaciones: {getAccusationCount()} / {gameState.players.length}</p>
 	</div>
 
 	<button
@@ -82,6 +82,6 @@
 		disabled={!canStartVoting()}
 		on:click={handleStartVoting}
 	>
-		Start Voting Phase
+		Comenzar Fase de Votación
 	</button>
 </div>

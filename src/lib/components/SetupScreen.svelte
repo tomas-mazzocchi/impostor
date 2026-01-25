@@ -27,14 +27,14 @@
 <HelpButton />
 
 <div class="flex flex-col gap-8">
-	<h1 class="text-center text-2xl mb-4">Game Setup</h1>
+	<h1 class="text-center text-2xl mb-4">Configuración del Juego</h1>
 
 	<section class="bg-gray-light p-6 rounded-lg">
-		<h2 class="text-xl mb-4">Players ({gameState.players.length})</h2>
+		<h2 class="text-xl mb-4">Jugadores ({gameState.players.length})</h2>
 		<div class="flex gap-2 mb-4">
 			<input
 				type="text"
-				placeholder="Enter player name"
+				placeholder="Ingresá el nombre del jugador"
 				bind:value={playerNameInput}
 				on:keypress={handleKeyPress}
 				class="flex-1 p-2 border border-gray-border rounded"
@@ -43,7 +43,7 @@
 				on:click={handleAddPlayer}
 				class="px-4 py-2 bg-primary text-white border-none rounded cursor-pointer"
 			>
-				Add Player
+				Agregar
 			</button>
 		</div>
 		<ul class="list-none p-0 flex flex-col gap-2">
@@ -54,7 +54,7 @@
 						on:click={() => dispatch('removePlayer', player.id)}
 						class="px-2 py-1 bg-danger text-white border-none rounded cursor-pointer"
 					>
-						Remove
+						Eliminar
 					</button>
 				</li>
 			{/each}
@@ -66,6 +66,6 @@
 		disabled={!canStartGame}
 		on:click={() => dispatch('startGame')}
 	>
-		Start Game
+		Comenzar Juego
 	</button>
 </div>
