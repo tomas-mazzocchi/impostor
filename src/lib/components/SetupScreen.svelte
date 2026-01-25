@@ -58,24 +58,6 @@
 		</ul>
 	</section>
 
-	<!-- <section class="category-section">
-		<h2>Select Category</h2>
-		<div class="category-grid">
-			{#each sampleCategories as category}
-				<button
-					class="category-card"
-					class:selected={gameState.category?.id === category.id}
-					on:click={() => dispatch('selectCategory', category)}
-				>
-					<h3>{category.name}</h3>
-					{#if category.description}
-						<p>{category.description}</p>
-					{/if}
-				</button>
-			{/each}
-		</div>
-	</section> -->
-
 	<button
 		class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer self-center disabled:bg-gray-300 disabled:cursor-not-allowed"
 		disabled={!canStartGame}

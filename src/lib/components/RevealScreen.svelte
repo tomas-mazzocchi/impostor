@@ -12,6 +12,7 @@
   let selectedWinner: 'impostor' | 'players' | null = null;
   let previouslyRecordedWinner: 'impostor' | 'players' | null = null;
   let lastRoundNumber = 0;
+  let players = gameState.players.map(player => ({ ...player, viewed: false }));
 
   // Reset when starting a new round (round number changes)
   $: if (gameState.roundNumber !== lastRoundNumber) {
@@ -31,6 +32,7 @@
   }
 
   function handleCloseCard() {
+    players = players.map(p => p.id === currentViewingPlayerId ? { ...p, viewed: true } : p);
     cardVisible = false;
     currentViewingPlayerId = null;
   }
@@ -41,8 +43,8 @@
   }
 
   $: startingPlayer = (() => {
-    if (gameState.currentPlayerIndex >= 0 && gameState.currentPlayerIndex < gameState.players.length) {
-      return gameState.players[gameState.currentPlayerIndex];
+    if (gameState.currentPlayerIndex >= 0 && gameState.currentPlayerIndex < players.length) {
+      return players[gameState.currentPlayerIndex];
     }
     return null;
   })();
@@ -85,7 +87,7 @@
   }
 
   function getRegularPlayerWord(): string | null {
-    const regularPlayer = gameState.players.find(p => p.role === 'regular');
+    const regularPlayer = players.find(p => p.role === 'regular');
     return regularPlayer?.word || null;
   }
 
@@ -104,7 +106,7 @@
     </div>
 
     <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 w-full">
-      {#each gameState.players as player}
+      {#each players as player}
         <div class="bg-white border-2 rounded-xl p-6 text-center shadow {player.role === 'impostor' ? 'border-danger bg-red-50' : 'border-gray-border'}">
           <h3 class="mb-2 text-xl text-gray-800">{player.name}</h3>
           <p class="mt-2 text-lg text-gray-text font-bold">Score: {player.score}</p>
@@ -162,12 +164,12 @@
     <div class="w-full max-w-[800px]">
       <h2 class="text-xl mb-4">Select a player to view their role</h2>
       <div class="flex flex-wrap gap-2 justify-center">
-        {#each gameState.players as player}
+        {#each players as player}
           <button
-            class="px-6 py-3 rounded-lg cursor-pointer text-base transition-all border-2 {currentViewingPlayerId === player.id ? 'bg-primary text-white border-primary' : 'bg-gray-light border-gray-border hover:border-primary hover:bg-blue-50'}"
+            class="px-6 py-3 rounded-lg text-base transition-all border-2 {player.viewed ? 'bg-gray-light border-gray-border cursor-not-allowed' : ' border-primary  bg-blue-50 cursor-pointer'}"
             on:click={() => handleViewPlayer(player.id)}
-            disabled={currentViewingPlayerId !== null &&
-              currentViewingPlayerId !== player.id}
+            disabled={(currentViewingPlayerId !== null &&
+              currentViewingPlayerId !== player.id || player.viewed)}
           >
             {player.name}
           </button>
@@ -177,7 +179,7 @@
 
     {#if currentViewingPlayerId && getCurrentPlayer()}
       {#if cardVisible}
-        <div class="bg-white border-4 border-primary rounded-2xl p-8 max-w-[500px] text-center shadow-md">
+        <div class="bg-white border-4 {getCurrentPlayer()?.role === 'impostor' ? 'border-danger' : 'border-primary'} rounded-2xl p-8 max-w-[500px] text-center shadow-md">
           <h2 class="mb-4 text-2xl">{getCurrentPlayer()?.name}</h2>
           <div
             class="inline-block px-6 py-2 rounded-full font-bold mb-6 text-lg text-white {getCurrentPlayer()?.role === 'impostor' ? 'bg-danger' : 'bg-success'}"

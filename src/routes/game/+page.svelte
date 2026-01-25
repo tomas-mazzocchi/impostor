@@ -10,8 +10,6 @@
 		moveToPlayingPhase,
 		addAccusation,
 		startVoting,
-		endGame,
-		getPlayerById,
 		recordRoundWinner,
 		reverseRoundWinner,
 		startNextRound,
@@ -21,8 +19,6 @@
 	import SetupScreen from '$lib/components/SetupScreen.svelte';
 	import RevealScreen from '$lib/components/RevealScreen.svelte';
 	import GameScreen from '$lib/components/GameScreen.svelte';
-	import VotingScreen from '$lib/components/VotingScreen.svelte';
-	import ResultsScreen from '$lib/components/ResultsScreen.svelte';
 	import FinalResultsScreen from '$lib/components/FinalResultsScreen.svelte';
 
 	let gameState: GameState = createInitialState();
@@ -128,11 +124,6 @@
 		gameState = startVoting(gameState);
 	}
 
-	function handleVoteComplete(impostorCaught: boolean) {
-		const winner = impostorCaught ? 'players' : 'impostor';
-		gameState = endGame(gameState, winner);
-	}
-
 	function handleNewGame() {
 		gameState = createInitialState();
 		currentViewingPlayerId = null;
@@ -174,7 +165,6 @@
 	{:else if gameState.phase === 'setup'}
 		<SetupScreen
 			{gameState}
-			{sampleCategories}
 			on:addPlayer={handleAddPlayer}
 			on:removePlayer={(e) => handleRemovePlayer(e.detail)}
 			on:selectCategory={(e) => handleSelectCategory(e.detail)}
@@ -185,7 +175,6 @@
 		<RevealScreen
 			{gameState}
 			{currentViewingPlayerId}
-			{viewedPlayers}
 			on:viewPlayer={(e) => handleViewPlayer(e.detail)}
 			on:markViewed={(e) => handleMarkViewed(e.detail)}
 			on:clearView={handleClearView}
@@ -202,16 +191,10 @@
 			on:accuse={(e) => handleAccuse(e.detail.accuserId, e.detail.accusedId)}
 			on:startVoting={handleStartVoting}
 		/>
-	{:else if gameState.phase === 'voting'}
-		<VotingScreen
-			{gameState}
-			on:voteComplete={(e) => handleVoteComplete(e.detail)}
-		/>
 	{:else if gameState.phase === 'roundResults'}
 		<RevealScreen
 			{gameState}
 			{currentViewingPlayerId}
-			{viewedPlayers}
 			on:roundWinner={(e) => handleRoundWinner(e)}
 			on:reverseRoundWinner={(e) => handleReverseRoundWinner(e)}
 			on:nextRound={handleNextRound}
