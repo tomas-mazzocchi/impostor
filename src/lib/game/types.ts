@@ -22,6 +22,13 @@ export interface Word {
 
 export type GamePhase = 'setup' | 'reveal' | 'playing' | 'roundResults' | 'finalResults';
 
+export interface RoundResult {
+	impostorExpelled: boolean;
+	expellers: string[];
+	roundsSurvived: number;
+	impostorGuessedWord: boolean;
+}
+
 export interface GameState {
 	phase: GamePhase;
 	players: Player[];

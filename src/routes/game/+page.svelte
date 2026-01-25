@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { GameState, Category, Word } from '$lib/game/types';
+	import type { GameState, Category, Word, RoundResult } from '$lib/game/types';
 	import {
 		createInitialState,
 		addPlayer,
@@ -10,8 +10,7 @@
 		moveToPlayingPhase,
 		addAccusation,
 		startVoting,
-		recordRoundWinner,
-		reverseRoundWinner,
+		recordRoundScores,
 		startNextRound,
 		showFinalResults,
 		reshuffleWord
@@ -100,12 +99,8 @@
 		gameState = moveToPlayingPhase(gameState);
 	}
 
-	function handleRoundWinner(event: CustomEvent<'impostor' | 'players'>) {
-		gameState = recordRoundWinner(gameState, event.detail);
-	}
-
-	function handleReverseRoundWinner(event: CustomEvent<'impostor' | 'players'>) {
-		gameState = reverseRoundWinner(gameState, event.detail);
+	function handleRecordRoundScores(event: CustomEvent<RoundResult>) {
+		gameState = recordRoundScores(gameState, event.detail);
 	}
 
 	function handleNextRound() {
@@ -179,8 +174,7 @@
 			on:markViewed={(e) => handleMarkViewed(e.detail)}
 			on:clearView={handleClearView}
 			on:complete={handleRevealComplete}
-			on:roundWinner={(e) => handleRoundWinner(e)}
-			on:reverseRoundWinner={(e) => handleReverseRoundWinner(e)}
+			on:recordRoundScores={handleRecordRoundScores}
 			on:nextRound={handleNextRound}
 			on:endGame={handleEndGame}
 			on:reshuffleWord={handleReshuffleWord}
@@ -195,8 +189,7 @@
 		<RevealScreen
 			{gameState}
 			{currentViewingPlayerId}
-			on:roundWinner={(e) => handleRoundWinner(e)}
-			on:reverseRoundWinner={(e) => handleReverseRoundWinner(e)}
+			on:recordRoundScores={handleRecordRoundScores}
 			on:nextRound={handleNextRound}
 			on:endGame={handleEndGame}
 			on:reshuffleWord={handleReshuffleWord}

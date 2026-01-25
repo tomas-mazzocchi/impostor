@@ -1,4 +1,4 @@
-import type { GameState, Player, Category, Word, PlayerRole } from './types';
+import type { GameState, Player, Category, Word, PlayerRole, RoundResult } from './types';
 
 export function createInitialState(): GameState {
 	return {
@@ -200,42 +200,42 @@ export function showRoundResults(state: GameState): GameState {
 	};
 }
 
-export function recordRoundWinner(
-	state: GameState,
-	winner: 'impostor' | 'players'
-): GameState {
+export function recordRoundScores(state: GameState, roundResult: RoundResult): GameState {
+	const { impostorExpelled, expellers, roundsSurvived, impostorGuessedWord } = roundResult;
+
 	const updatedPlayers = state.players.map((player) => {
-		if (winner === 'impostor' && player.role === 'impostor') {
-			return { ...player, score: player.score + 1 };
-		} else if (winner === 'players' && player.role === 'regular') {
-			return { ...player, score: player.score + 1 };
+		let scoreIncrease = 0;
+
+		if (player.role === 'impostor') {
+			// Impostor always gets +1 per round survived
+			scoreIncrease += roundsSurvived;
+
+			if (!impostorExpelled) {
+				// +5 if wins by not being discovered
+				scoreIncrease += 5;
+			} else if (impostorGuessedWord) {
+				// +3 if expelled but guessed the word
+				scoreIncrease += 3;
+			}
+		} else if (player.role === 'regular') {
+			if (impostorExpelled) {
+				// All regular players get +2 if impostor was expelled
+				scoreIncrease += 2;
+
+				// Additional +1 if this player voted to expel
+				if (expellers.includes(player.id)) {
+					scoreIncrease += 1;
+				}
+			}
 		}
-		return player;
+
+		return { ...player, score: player.score + scoreIncrease };
 	});
 
 	return {
 		...state,
 		players: updatedPlayers,
-		winner
-	};
-}
-
-export function reverseRoundWinner(
-	state: GameState,
-	winner: 'impostor' | 'players'
-): GameState {
-	const updatedPlayers = state.players.map((player) => {
-		if (winner === 'impostor' && player.role === 'impostor') {
-			return { ...player, score: Math.max(0, player.score - 1) };
-		} else if (winner === 'players' && player.role === 'regular') {
-			return { ...player, score: Math.max(0, player.score - 1) };
-		}
-		return player;
-	});
-
-	return {
-		...state,
-		players: updatedPlayers
+		winner: impostorExpelled ? 'players' : 'impostor'
 	};
 }
 

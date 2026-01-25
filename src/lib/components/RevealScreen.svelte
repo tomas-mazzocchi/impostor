@@ -9,8 +9,6 @@
   const dispatch = createEventDispatcher();
   let cardVisible = false;
   let showRoundResults = false;
-  let selectedWinner: 'impostor' | 'players' | null = null;
-  let previouslyRecordedWinner: 'impostor' | 'players' | null = null;
   let lastRoundNumber = 0;
   let players = gameState.players.map(player => ({ ...player, viewed: false }));
   
@@ -25,8 +23,6 @@
   $: if (gameState.roundNumber !== lastRoundNumber) {
     lastRoundNumber = gameState.roundNumber;
     showRoundResults = false;
-    selectedWinner = null;
-    previouslyRecordedWinner = null;
     impostorExpelled = null;
     expellers = new Set();
     roundsSurvived = null;
@@ -63,7 +59,6 @@
 
   function handleRoundFinished() {
     showRoundResults = true;
-    selectedWinner = null;
   }
 
   function handleReshuffleWord() {
@@ -73,28 +68,26 @@
     dispatch('reshuffleWord');
   }
 
-  function handleWinnerSelected(winner: 'impostor' | 'players') {
-    selectedWinner = winner;
-    
-    // Only record if this is a different selection than what was previously recorded
-    if (previouslyRecordedWinner !== winner) {
-      // If there was a previously recorded winner, reverse it first
-      if (previouslyRecordedWinner !== null) {
-        dispatch('reverseRoundWinner', previouslyRecordedWinner);
-      }
-      
-      // Record the new winner
-      dispatch('roundWinner', winner);
-      previouslyRecordedWinner = winner;
-    }
-  }
-
   function handleContinueToNextRound() {
+    const roundResult = {
+      impostorExpelled: impostorExpelled ?? false,
+      expellers: Array.from(expellers),
+      roundsSurvived: roundsSurvived ?? 0,
+      impostorGuessedWord: impostorGuessedWord ?? false
+    };
+    dispatch('recordRoundScores', roundResult);
     showRoundResults = false;
     dispatch('nextRound');
   }
 
   function handleEndGame() {
+    const roundResult = {
+      impostorExpelled: impostorExpelled ?? false,
+      expellers: Array.from(expellers),
+      roundsSurvived: roundsSurvived ?? 0,
+      impostorGuessedWord: impostorGuessedWord ?? false
+    };
+    dispatch('recordRoundScores', roundResult);
     dispatch('endGame');
   }
 
@@ -307,7 +300,7 @@
           disabled={!isAllQuestionsAnswered}
           on:click={handleEndGame}
         >
-          End Game & Show Rankings
+          End Game
         </button>
       </div>
     </div>
