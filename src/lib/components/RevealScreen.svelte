@@ -30,6 +30,9 @@
     roundsSurvived = null;
     impostorGuessedWord = null;
     currentQuestionIndex = 0;
+    players = gameState.players.map(player => ({ ...player, viewed: false }));
+    cardVisible = false;
+    currentViewingPlayerId = null;
   }
 
   function handleViewPlayer(playerId: string) {
@@ -64,7 +67,8 @@
   }
 
   function handleReshuffleWord() {
-    // Close any open cards to ensure fresh view
+    // Close any open cards and reset viewed status to ensure fresh view
+    players = gameState.players.map(player => ({ ...player, viewed: false }));
     cardVisible = false;
     currentViewingPlayerId = null;
     dispatch('reshuffleWord');
