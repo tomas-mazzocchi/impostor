@@ -20,6 +20,8 @@
 	import RevealScreen from '$lib/components/RevealScreen.svelte';
 	import GameScreen from '$lib/components/GameScreen.svelte';
 	import FinalResultsScreen from '$lib/components/FinalResultsScreen.svelte';
+	import Modal from '$lib/components/ui/Modal.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
 
 	let gameState: GameState = createInitialState();
 	let playerNameInput = '';
@@ -168,12 +170,9 @@
 	<div class="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center">
 		<h2 class="text-danger m-0">Error al cargar los datos del juego</h2>
 		<p>{error}</p>
-		<button 
-			class="px-6 py-3 bg-primary text-white border-none rounded-lg cursor-pointer text-base transition-colors hover:bg-blue-700"
-			on:click={loadGameData}
-		>
+		<Button variant="primary" size="lg" on:click={loadGameData}>
 			Reintentar
-		</button>
+		</Button>
 		</div>
 	{:else if gameState.phase === 'setup'}
 		<SetupScreen
@@ -197,12 +196,6 @@
 			on:endGame={handleEndGame}
 			on:reshuffleWord={handleReshuffleWord}
 		/>
-	{:else if gameState.phase === 'playing'}
-		<GameScreen
-			{gameState}
-			on:accuse={(e) => handleAccuse(e.detail.accuserId, e.detail.accusedId)}
-			on:startVoting={handleStartVoting}
-		/>
 	{:else if gameState.phase === 'roundResults'}
 		<RevealScreen
 			{gameState}
@@ -217,47 +210,22 @@
 	{/if}
 
 	<!-- New Game Modal -->
-	{#if showNewGameModal}
-		<div 
-			class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
-			role="button"
-			tabindex="0"
-			on:click={handleCancelNewGame}
-			on:keydown={(e) => e.key === 'Escape' && handleCancelNewGame()}
-		>
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-			<div 
-				class="bg-white rounded-2xl p-8 max-w-[500px] w-full mx-4 shadow-2xl" 
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="modal-title"
-				on:click={(e) => e.stopPropagation()}
+	<Modal open={showNewGameModal} title="Nuevo Juego" maxWidth="500px" on:close={handleCancelNewGame}>
+		<p class="text-lg text-center mb-8 text-gray-600">¿Querés mantener a los mismos jugadores?</p>
+		
+		<div class="flex flex-col gap-4">
+			<Button variant="primary" size="xl" on:click={handleKeepPlayers}>
+				Mantener Jugadores
+			</Button>
+			<Button variant="secondary" size="xl" on:click={handleNewPlayers}>
+				Nuevos Jugadores
+			</Button>
+			<button
+				class="px-6 py-3 text-base bg-transparent text-gray-600 border-2 border-gray-300 rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-100"
+				on:click={handleCancelNewGame}
 			>
-				<h2 id="modal-title" class="text-3xl font-bold text-center mb-6 text-gray-800">Nuevo Juego</h2>
-				<p class="text-lg text-center mb-8 text-gray-600">¿Querés mantener a los mismos jugadores?</p>
-				
-				<div class="flex flex-col gap-4">
-					<button
-						class="px-8 py-4 text-xl bg-primary text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-blue-700"
-						on:click={handleKeepPlayers}
-					>
-						Mantener Jugadores
-					</button>
-					<button
-						class="px-8 py-4 text-xl bg-gray-600 text-white border-none rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-700"
-						on:click={handleNewPlayers}
-					>
-						Nuevos Jugadores
-					</button>
-					<button
-						class="px-6 py-3 text-base bg-transparent text-gray-600 border-2 border-gray-300 rounded-lg cursor-pointer font-bold transition-colors hover:bg-gray-100"
-						on:click={handleCancelNewGame}
-					>
-						Cancelar
-					</button>
-				</div>
-			</div>
+				Cancelar
+			</button>
 		</div>
-	{/if}
+	</Modal>
 </div>

@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { onMount } from 'svelte';
 	import HelpButton from './HelpButton.svelte';
+	import Button from './ui/Button.svelte';
 
 	export let gameState: GameState;
 	export let playerNameInput: string;
@@ -39,33 +40,25 @@
 				on:keypress={handleKeyPress}
 				class="flex-1 p-2 border border-gray-border rounded"
 			/>
-			<button 
-				on:click={handleAddPlayer}
-				class="px-4 py-2 bg-primary text-white border-none rounded cursor-pointer"
-			>
+			<Button variant="primary" size="md" on:click={handleAddPlayer}>
 				Agregar
-			</button>
+			</Button>
 		</div>
 		<ul class="list-none p-0 flex flex-col gap-2">
 			{#each gameState.players as player (player.id)}
 				<li class="flex justify-between items-center p-2 bg-white rounded">
 					<span>{player.name}</span>
-					<button 
-						on:click={() => dispatch('removePlayer', player.id)}
-						class="px-2 py-1 bg-danger text-white border-none rounded cursor-pointer"
-					>
+					<Button variant="danger" size="sm" on:click={() => dispatch('removePlayer', player.id)}>
 						Eliminar
-					</button>
+					</Button>
 				</li>
 			{/each}
 		</ul>
 	</section>
 
-	<button
-		class="px-8 py-4 text-xl bg-success text-white border-none rounded-lg cursor-pointer self-center disabled:bg-gray-300 disabled:cursor-not-allowed"
-		disabled={!canStartGame}
-		on:click={() => dispatch('startGame')}
-	>
-		Comenzar Juego
-	</button>
+	<div class="self-center">
+		<Button variant="success" size="xl" disabled={!canStartGame} on:click={() => dispatch('startGame')}>
+			Comenzar Juego
+		</Button>
+	</div>
 </div>

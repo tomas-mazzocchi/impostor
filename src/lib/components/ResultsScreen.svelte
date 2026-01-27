@@ -2,6 +2,7 @@
 	import type { GameState } from '$lib/game/types';
 	import { createEventDispatcher } from 'svelte';
 	import { getImpostor } from '$lib/game/local-mode';
+	import Button from './ui/Button.svelte';
 
 	export let gameState: GameState;
 
@@ -47,10 +48,7 @@
 		</div>
 	</div>
 
-	<button 
-		class="px-8 py-4 text-xl bg-primary text-white border-none rounded-lg cursor-pointer transition-colors hover:bg-blue-700"
-		on:click={() => dispatch('newGame')}
-	>
+	<Button variant="primary" size="xl" on:click={() => dispatch('newGame')}>
 		Nuevo Juego
-	</button>
+	</Button>
 </div>
