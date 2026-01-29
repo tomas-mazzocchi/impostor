@@ -34,6 +34,7 @@ export interface Database {
 					approved?: boolean;
 					created_by?: string | null;
 				};
+				Relationships: [];
 			};
 			words: {
 				Row: {
@@ -60,6 +61,7 @@ export interface Database {
 					approved?: boolean;
 					created_by?: string | null;
 				};
+				Relationships: [];
 			};
 			reports: {
 				Row: {
@@ -86,6 +88,7 @@ export interface Database {
 					user_id?: string | null;
 					created_at?: string;
 				};
+				Relationships: [];
 			};
 			user_roles: {
 				Row: {
@@ -103,6 +106,7 @@ export interface Database {
 					role?: 'admin' | 'moderator';
 					created_at?: string;
 				};
+				Relationships: [];
 			};
 		};
 		Views: {
@@ -112,6 +116,9 @@ export interface Database {
 			[_ in never]: never;
 		};
 		Enums: {
+			[_ in never]: never;
+		};
+		CompositeTypes: {
 			[_ in never]: never;
 		};
 	};

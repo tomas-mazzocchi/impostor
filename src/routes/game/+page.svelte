@@ -18,7 +18,6 @@
 	} from '$lib/game/local-mode';
 	import SetupScreen from '$lib/components/SetupScreen.svelte';
 	import RevealScreen from '$lib/components/RevealScreen.svelte';
-	import GameScreen from '$lib/components/GameScreen.svelte';
 	import FinalResultsScreen from '$lib/components/FinalResultsScreen.svelte';
 	import Modal from '$lib/components/ui/Modal.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
