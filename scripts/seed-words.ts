@@ -46,6 +46,16 @@ function extractUniqueCategories(rows: CsvRow[]): string[] {
 	return Array.from(categories);
 }
 
+function deduplicateWords(rows: CsvRow[]): CsvRow[] {
+	const seen = new Set<string>();
+	return rows.filter((row) => {
+		const key = row.word.toLowerCase();
+		if (seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
+}
+
 async function clearExistingData(supabase: SupabaseClient): Promise<void> {
 	console.log('Clearing existing words...');
 	const { error: wordsError } = await supabase.from('words').delete().not('id', 'is', null);
@@ -61,7 +71,10 @@ async function insertCategories(
 	categories: string[]
 ): Promise<CategoryMap> {
 	const categoryData = categories.map((name) => ({ name, approved: true }));
-	const { data, error } = await supabase.from('categories').insert(categoryData).select('id, name');
+	const { data, error } = await supabase
+		.from('categories')
+		.insert(categoryData)
+		.select('id, name');
 	if (error) throw new Error(`Failed to insert categories: ${error.message}`);
 	return buildCategoryMap(data);
 }
@@ -110,10 +123,13 @@ async function main(): Promise<void> {
 
 	const { url, key } = loadEnvVariables();
 	const supabase = createAdminClient(url, key);
-	const rows = parseCsv(csvPath);
+	const rawRows = parseCsv(csvPath);
+	const rows = deduplicateWords(rawRows);
 	const categories = extractUniqueCategories(rows);
+	const duplicatesRemoved = rawRows.length - rows.length;
 
-	console.log(`Parsed ${rows.length} words in ${categories.length} categories`);
+	console.log(`Parsed ${rawRows.length} rows, ${duplicatesRemoved} duplicates removed`);
+	console.log(`Inserting ${rows.length} unique words in ${categories.length} categories`);
 
 	await clearExistingData(supabase);
 	const categoryMap = await insertCategories(supabase, categories);
