@@ -130,6 +130,25 @@ impostor/
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run check` - Run type checking
+- `npm run test` - Run tests once
+- `npm run test:watch` - Run tests in watch mode
+
+### Testing
+
+The project uses [Vitest](https://vitest.dev/) for testing with [@testing-library/svelte](https://testing-library.com/docs/svelte-testing-library/intro/) for component tests.
+
+**Test files location:**
+- `src/lib/game/local-mode.test.ts` - Unit tests for game logic (role assignment, scoring, round management)
+- `src/lib/components/RoundQuestionnaire.test.ts` - Component tests for the round questionnaire navigation
+
+**Running tests:**
+```bash
+# Run all tests once
+npm run test
+
+# Run tests in watch mode (re-runs on file changes)
+npm run test:watch
+```
 
 ### Local Mode
 The game currently supports local mode (single device). Players pass the device around to view their roles privately. No network connection is required for local gameplay.

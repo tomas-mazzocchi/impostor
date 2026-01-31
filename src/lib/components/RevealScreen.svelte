@@ -18,16 +18,22 @@
   let showRoundResults = false;
   let showStandingsModal = false;
   let lastRoundNumber = 0;
-  let players = gameState.players.map(player => ({ ...player, viewed: false }));
+  let viewedPlayers: Set<string> = new Set();
   let isQuestionnaireComplete = false;
   
   let questionnaireComponent: RoundQuestionnaire;
 
-  // Reset when starting a new round (round number changes)
+  // Players is now fully reactive to gameState.players, merging with local viewed state
+  $: players = gameState.players.map(player => ({
+    ...player,
+    viewed: viewedPlayers.has(player.id)
+  }));
+
+  // Reset viewed state when starting a new round
   $: if (gameState.roundNumber !== lastRoundNumber) {
     lastRoundNumber = gameState.roundNumber;
     showRoundResults = false;
-    players = gameState.players.map(player => ({ ...player, viewed: false }));
+    viewedPlayers = new Set();
     cardVisible = false;
     currentViewingPlayerId = null;
   }
@@ -41,8 +47,14 @@
     cardVisible = true;
   }
 
+  function markPlayerAsViewed(playerId: string) {
+    viewedPlayers = new Set([...viewedPlayers, playerId]);
+  }
+
   function handleCloseCard() {
-    players = players.map(p => p.id === currentViewingPlayerId ? { ...p, viewed: true } : p);
+    if (currentViewingPlayerId) {
+      markPlayerAsViewed(currentViewingPlayerId);
+    }
     cardVisible = false;
     currentViewingPlayerId = null;
   }
@@ -64,7 +76,7 @@
   }
 
   function handleReshuffleWord() {
-    players = gameState.players.map(player => ({ ...player, viewed: false }));
+    viewedPlayers = new Set();
     cardVisible = false;
     currentViewingPlayerId = null;
     dispatch('reshuffleWord');

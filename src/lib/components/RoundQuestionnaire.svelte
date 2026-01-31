@@ -12,7 +12,7 @@
 
   let impostorExpelled: boolean | null = null;
   let expellers: Set<string> = new Set();
-  let roundsSurvived: number | null = null;
+  let roundsSurvived: number = 0;
   let impostorGuessedWord: boolean | null = null;
   let currentQuestionIndex = 0;
 
@@ -25,17 +25,13 @@
   }
 
   function incrementRoundsSurvived() {
-    if (roundsSurvived === null) {
-      roundsSurvived = 1;
-    } else {
+    if (roundsSurvived < players.length) {
       roundsSurvived++;
     }
   }
 
   function decrementRoundsSurvived() {
-    if (roundsSurvived === null) {
-      roundsSurvived = 0;
-    } else if (roundsSurvived > 0) {
+    if (roundsSurvived > 0) {
       roundsSurvived--;
     }
   }
@@ -57,7 +53,7 @@
   $: canGoToNextQuestion = (() => {
     if (currentQuestionIndex === 0) return impostorExpelled === true;
     if (currentQuestionIndex === 1) return expellers.size > 0;
-    if (currentQuestionIndex === 2) return roundsSurvived !== null;
+    if (currentQuestionIndex === 2) return true;
     return false;
   })();
 
@@ -73,7 +69,7 @@
   $: isComplete = (() => {
     if (impostorExpelled === false) return true;
     if (impostorExpelled === true) {
-      return expellers.size > 0 && roundsSurvived !== null && impostorGuessedWord !== null;
+      return expellers.size > 0 && impostorGuessedWord !== null;
     }
     return false;
   })();
@@ -117,17 +113,17 @@
         <button
           class="w-8 h-8 text-xl bg-danger text-white border-none rounded-full cursor-pointer font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center leading-none"
           on:click={decrementRoundsSurvived}
-          disabled={roundsSurvived === null || roundsSurvived === 0}
+          disabled={roundsSurvived === 0}
         >
           −
         </button>
         <div class="px-8 py-4 text-4xl font-bold text-primary border-4 border-primary rounded-lg min-w-[120px] bg-white">
-          {roundsSurvived ?? 0}
+          {roundsSurvived}
         </div>
         <button
           class="w-8 h-8 text-xl bg-success text-white border-none rounded-full cursor-pointer font-bold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center leading-none"
           on:click={incrementRoundsSurvived}
-          disabled={roundsSurvived !== null && roundsSurvived >= players.length-1}
+          disabled={roundsSurvived >= players.length-1}
         >
           +
         </button>
