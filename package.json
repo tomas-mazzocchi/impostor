@@ -12,6 +12,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"seed": "tsx scripts/seed-words.ts",
+		"add-words": "tsx scripts/add-words.ts",
 		"test": "vitest run",
 		"test:watch": "vitest"
 	},
