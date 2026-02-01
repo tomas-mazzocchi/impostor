@@ -35,7 +35,7 @@
 		<div class="flex gap-2 mb-4">
 			<input
 				type="text"
-				placeholder="Ingresá el nombre del jugador"
+				placeholder="Nombre"
 				bind:value={playerNameInput}
 				on:keypress={handleKeyPress}
 				class="flex-1 p-2 border border-gray-border rounded"

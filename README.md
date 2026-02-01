@@ -2,6 +2,10 @@
 
 A web-based deduction game where players try to identify the impostor. Players receive a category and a secret word (except the impostor who only knows the category). Through discussion and clues, players must figure out who doesn't know the word.
 
+**Play now:** https://impostor-ivory.vercel.app/
+
+Feedback is welcome!
+
 ## Game Rules
 
 ### Setup
