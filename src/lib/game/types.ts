@@ -36,6 +36,8 @@ export interface GameState {
 	words: Word[];
 	currentPlayerIndex: number;
 	impostorIndex: number;
+	/** Number of impostors used when entering reveal (from setup). Used for reshuffle/next round. */
+	impostorCount: number;
 	accusations: Record<string, string>;
 	winner: 'impostor' | 'players' | null;
 	roundNumber: number;

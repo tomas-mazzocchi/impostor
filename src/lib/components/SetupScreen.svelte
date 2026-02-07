@@ -7,6 +7,7 @@
 
 	export let gameState: GameState;
 	export let playerNameInput: string;
+	export let impostorCount: number = 1;
 
 	const dispatch = createEventDispatcher();
 
@@ -22,6 +23,7 @@
 		}
 	}
 
+	$: maxImpostors = Math.max(1, gameState.players.length - 1);
 	$: canStartGame = gameState.players.length >= 3;
 </script>
 
@@ -32,6 +34,18 @@
 
 	<section class="bg-gray-light p-6 rounded-lg">
 		<h2 class="text-xl mb-4">Jugadores ({gameState.players.length})</h2>
+		<div class="flex flex-wrap items-center gap-4 mb-4">
+			<label class="flex items-center gap-2">
+				<span class="text-gray-700">Impostores</span>
+				<input
+					type="number"
+					min="1"
+					max={maxImpostors}
+					bind:value={impostorCount}
+					class="w-20 p-2 border border-gray-border rounded text-center"
+				/>
+			</label>
+		</div>
 		<div class="flex gap-2 mb-4">
 			<input
 				type="text"

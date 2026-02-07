@@ -8,10 +8,35 @@ export function createInitialState(): GameState {
 		words: [],
 		currentPlayerIndex: 0,
 		impostorIndex: -1,
+		impostorCount: 1,
 		accusations: {},
 		winner: null,
 		roundNumber: 0
 	};
+}
+
+function pickRandomIndices(count: number, maxExclusive: number): number[] {
+	const indices = Array.from({ length: maxExclusive }, (_, i) => i);
+	for (let i = indices.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[indices[i], indices[j]] = [indices[j], indices[i]];
+	}
+	return indices.slice(0, count);
+}
+
+function assignRolesFromImpostorIndices(
+	players: Player[],
+	impostorIndices: number[],
+	regularPlayerWord: string
+): { playersWithWords: Player[]; firstImpostorIndex: number } {
+	const impostorSet = new Set(impostorIndices);
+	const firstImpostorIndex = impostorIndices[0] ?? -1;
+	const playersWithWords = players.map((player, index) => {
+		const role: PlayerRole = impostorSet.has(index) ? 'impostor' : 'regular';
+		const word = role === 'impostor' ? null : regularPlayerWord;
+		return { ...player, role, word };
+	});
+	return { playersWithWords, firstImpostorIndex };
 }
 
 export function resetGameWithSamePlayers(
@@ -29,35 +54,30 @@ export function resetGameWithSamePlayers(
 		throw new Error('No categories available');
 	}
 
-	// Pick a random word from ALL words first
 	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
 	const selectedWord = shuffledWords[0];
-
-	// Find the category that matches the word's categoryId
 	const category = findCategoryByWord(categories, selectedWord);
 	if (!category) {
 		throw new Error(`No category found for word: ${selectedWord.word}`);
 	}
 
-	const impostorIndex = Math.floor(Math.random() * state.players.length);
+	const count = clampImpostorCount(state.impostorCount ?? 1, state.players.length);
+	const impostorIndices = pickRandomIndices(count, state.players.length);
 	const startingPlayerIndex = Math.floor(Math.random() * state.players.length);
-
-	// Pick one word for all regular players
-	const regularPlayerWord = selectedWord.word;
-
-	const playersWithWords = state.players.map((player, index) => {
-		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
-		const word = role === 'impostor' ? null : regularPlayerWord;
-		return { ...player, role, word, score: 0 };
-	});
+	const { playersWithWords, firstImpostorIndex } = assignRolesFromImpostorIndices(
+		state.players,
+		impostorIndices,
+		selectedWord.word
+	);
 
 	return {
 		...state,
 		phase: 'reveal',
 		category,
-		players: playersWithWords,
+		players: playersWithWords.map((p) => ({ ...p, score: 0 })),
 		words: shuffledWords,
-		impostorIndex,
+		impostorIndex: firstImpostorIndex,
+		impostorCount: count,
 		currentPlayerIndex: startingPlayerIndex,
 		roundNumber: 1,
 		accusations: {},
@@ -97,10 +117,16 @@ function findCategoryByWord(categories: Category[], word: Word): Category | null
 	return categories.find((c) => c.id === word.categoryId) || null;
 }
 
+function clampImpostorCount(count: number, playerCount: number): number {
+	const max = Math.max(1, playerCount - 1);
+	return Math.min(max, Math.max(1, Math.floor(Number(count)) || 1));
+}
+
 export function startGame(
 	state: GameState,
 	allWords: Word[],
-	categories: Category[]
+	categories: Category[],
+	impostorCount: number = 1
 ): GameState {
 	if (state.players.length < 3) {
 		throw new Error('Need at least 3 players');
@@ -112,27 +138,21 @@ export function startGame(
 		throw new Error('No categories available');
 	}
 
-	// Pick a random word from ALL words first
 	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
 	const selectedWord = shuffledWords[0];
-
-	// Find the category that matches the word's categoryId
 	const category = findCategoryByWord(categories, selectedWord);
 	if (!category) {
 		throw new Error(`No category found for word: ${selectedWord.word}`);
 	}
 
-	const impostorIndex = Math.floor(Math.random() * state.players.length);
+	const count = clampImpostorCount(impostorCount, state.players.length);
+	const impostorIndices = pickRandomIndices(count, state.players.length);
 	const startingPlayerIndex = Math.floor(Math.random() * state.players.length);
-
-	// Pick one word for all regular players
-	const regularPlayerWord = selectedWord.word;
-
-	const playersWithWords = state.players.map((player, index) => {
-		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
-		const word = role === 'impostor' ? null : regularPlayerWord;
-		return { ...player, role, word };
-	});
+	const { playersWithWords, firstImpostorIndex } = assignRolesFromImpostorIndices(
+		state.players,
+		impostorIndices,
+		selectedWord.word
+	);
 
 	return {
 		...state,
@@ -140,7 +160,8 @@ export function startGame(
 		category,
 		players: playersWithWords,
 		words: shuffledWords,
-		impostorIndex,
+		impostorIndex: firstImpostorIndex,
+		impostorCount: count,
 		currentPlayerIndex: startingPlayerIndex,
 		roundNumber: state.roundNumber + 1
 	};
@@ -171,45 +192,37 @@ export function reshuffleWord(
 		throw new Error('No words available');
 	}
 
-	// Pick a random word from ALL words first
 	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
 	const selectedWord = shuffledWords[0];
-
-	// Find the category that matches the word's categoryId
 	const category = findCategoryByWord(categories, selectedWord);
 	if (!category) {
 		throw new Error(`No category found for word: ${selectedWord.word}`);
 	}
 
-	// Ensure impostor changes (if there are multiple players)
-	let impostorIndex: number;
-	do {
-		impostorIndex = Math.floor(Math.random() * state.players.length);
-	} while (impostorIndex === state.impostorIndex && state.players.length > 1);
-
-	// Ensure starting player changes (if there are multiple players)
-	let startingPlayerIndex: number;
-	do {
-		startingPlayerIndex = Math.floor(Math.random() * state.players.length);
-	} while (startingPlayerIndex === state.currentPlayerIndex && state.players.length > 1);
-
-	// Pick one word for all regular players
-	const regularPlayerWord = selectedWord.word;
-
-	const playersWithWords = state.players.map((player, index) => {
-		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
-		const word = role === 'impostor' ? null : regularPlayerWord;
-		return { ...player, role, word };
-	});
+	const count = clampImpostorCount(state.impostorCount ?? 1, state.players.length);
+	let impostorIndices = pickRandomIndices(count, state.players.length);
+	if (count === 1 && state.players.length > 1) {
+		while (impostorIndices[0] === state.impostorIndex) {
+			impostorIndices = pickRandomIndices(1, state.players.length);
+		}
+	}
+	let startingPlayerIndex = Math.floor(Math.random() * state.players.length);
+	if (state.players.length > 1 && startingPlayerIndex === state.currentPlayerIndex) {
+		startingPlayerIndex = (startingPlayerIndex + 1) % state.players.length;
+	}
+	const { playersWithWords, firstImpostorIndex } = assignRolesFromImpostorIndices(
+		state.players,
+		impostorIndices,
+		selectedWord.word
+	);
 
 	return {
 		...state,
 		category,
 		players: playersWithWords,
 		words: shuffledWords,
-		impostorIndex,
+		impostorIndex: firstImpostorIndex,
 		currentPlayerIndex: startingPlayerIndex
-		// Keep roundNumber unchanged
 	};
 }
 
@@ -302,27 +315,21 @@ export function startNextRound(
 		throw new Error('No categories available');
 	}
 
-	// Pick a random word from ALL words first
 	const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
 	const selectedWord = shuffledWords[0];
-
-	// Find the category that matches the word's categoryId
 	const category = findCategoryByWord(categories, selectedWord);
 	if (!category) {
 		throw new Error(`No category found for word: ${selectedWord.word}`);
 	}
 
-	const impostorIndex = Math.floor(Math.random() * state.players.length);
+	const count = clampImpostorCount(state.impostorCount ?? 1, state.players.length);
+	const impostorIndices = pickRandomIndices(count, state.players.length);
 	const startingPlayerIndex = Math.floor(Math.random() * state.players.length);
-
-	// Pick one word for all regular players
-	const regularPlayerWord = selectedWord.word;
-
-	const playersWithWords = state.players.map((player, index) => {
-		const role: PlayerRole = index === impostorIndex ? 'impostor' : 'regular';
-		const word = role === 'impostor' ? null : regularPlayerWord;
-		return { ...player, role, word };
-	});
+	const { playersWithWords, firstImpostorIndex } = assignRolesFromImpostorIndices(
+		state.players,
+		impostorIndices,
+		selectedWord.word
+	);
 
 	return {
 		...state,
@@ -330,7 +337,7 @@ export function startNextRound(
 		category,
 		players: playersWithWords,
 		words: shuffledWords,
-		impostorIndex,
+		impostorIndex: firstImpostorIndex,
 		currentPlayerIndex: startingPlayerIndex,
 		roundNumber: state.roundNumber + 1,
 		accusations: {},

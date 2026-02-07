@@ -24,6 +24,7 @@
 
 	let gameState: GameState = createInitialState();
 	let playerNameInput = '';
+	let impostorCount = 1;
 	let currentViewingPlayerId: string | null = null;
 	let viewedPlayers: Set<string> = new Set();
 	let showNewGameModal = false;
@@ -91,7 +92,7 @@
 	}
 
 	function handleStartGame() {
-		gameState = startGame(gameState, sampleWords, sampleCategories);
+		gameState = startGame(gameState, sampleWords, sampleCategories, impostorCount);
 	}
 
 	function handleReshuffleWord() {
@@ -181,6 +182,7 @@
 			on:selectCategory={(e) => handleSelectCategory(e.detail)}
 			on:startGame={handleStartGame}
 			bind:playerNameInput
+			bind:impostorCount
 		/>
 	{:else if gameState.phase === 'reveal'}
 		<RevealScreen
